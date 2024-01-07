@@ -1,8 +1,14 @@
 import React from 'react'
+import NavBar from './components/NavBar'
+import Footer from './components/Footer'
 
 const Ordering = () => {
   return (
-    <div>You can place your order here</div>
+    <>
+      <NavBar/>
+        <div>You can place your order here</div>
+      <Footer/>
+    </>
   )
 }
 

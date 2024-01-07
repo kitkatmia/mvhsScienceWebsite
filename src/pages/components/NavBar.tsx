@@ -14,14 +14,14 @@ export default function NavBar() {
                 <Link href="/ordering" passHref>
                     <Button>Supplies and Ordering</Button>
                 </Link>
-                <Link href="/" passHref>
+                <Link href="/faq" passHref>
                     <Button>FAQ</Button>
                 </Link>
-                <Link href="https://sites.google.com/mvla.net/mvlasciencelabtech/home?authuser=0" passHref>
+                <a href="https://sites.google.com/mvla.net/mvlasciencelabtech/" target='_blank'>
                     <Button>General Info</Button>
-                </Link>
+                </a>
             </ButtonGroup>
-             <Button variant="outlined" className='ml-5'>Sign-in</Button>
+             <Button className='ml-5' variant="outlined" color="success">Sign-in</Button>
         </div>
     </div>
 
