@@ -22,16 +22,12 @@ const FAQ = () => {
         <NavBar/>
             <div>This is where the faq will be</div>
             <AccordionGroup>
-                {/* <Accordion> */}
-                {questions.map(value => {
-                            return <Accordion>
-                                <AccordionSummary>{value.question}</AccordionSummary>
-                                <AccordionDetails>{value.answer}</AccordionDetails>
-                            </Accordion>
-                })}
-                {/* <AccordionSummary>Title</AccordionSummary>
-                <AccordionDetails>Content</AccordionDetails> */}
-            {/* </Accordion> */}
+                {questions.map((value, index) => (
+                  <Accordion key={index}>
+                    <AccordionSummary>{value.question}</AccordionSummary>
+                    <AccordionDetails>{value.answer}</AccordionDetails>
+                  </Accordion>
+                ))}
             </AccordionGroup>
         <Footer/>
     </>
