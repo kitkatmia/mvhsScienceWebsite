@@ -1,5 +1,5 @@
 'use client'
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/joy/Button';
 import ButtonGroup from '@mui/joy/ButtonGroup';
 import Link from 'next/link';
@@ -8,12 +8,8 @@ import { IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 // modal
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
-import { Typography } from '@mui/material';
-import Select from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
 import SettingsBox from './SettingsBox';
 
 export default function NavBar() {
@@ -23,23 +19,11 @@ export default function NavBar() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const style = {
-    position: 'absolute' as 'absolute',
-    top: '25%',
-    left: '50%',
-    transform: 'translate(-50%, -25%)',
-    width: '70%',
-    minWidth: "150px",
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    };
-
     return (
     <div className='flex justify-between p-4'>
-        <Link href="/">MVLA Lab Support</Link>
+        <Link href="/" className='text-black no-underline'>MVLA Lab Support</Link>
         <div className='flex justify-between'>
-            <ButtonGroup aria-label="outlined primary button group">
+            <ButtonGroup aria-label="outlined button group">
                 <Link href="/ordering" passHref>
                     <Button>Supplies and Ordering</Button>
                 </Link>
@@ -56,18 +40,11 @@ export default function NavBar() {
                             <Modal
                             open={open}
                             onClose={handleClose}
-                            // aria-labelledby="modal-modal-title"
-                            // aria-describedby="modal-modal-description"
+                            style={{ zIndex: 1000 }} // z-index so dropdowns open in front -not behind- modal
                             >
-                                <SettingsBox session={session} />
-                            {/* <Box sx={style}>
-                                <Typography  variant="h6">
-                                Settings for {session.user.name}
-                                </Typography>
-                                <Typography >
-                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                                </Typography>
-                            </Box> */}
+                                <div style={{ position: 'relative', zIndex: 1001 }}> 
+                                    <SettingsBox onClose={handleClose}/>
+                                </div>
                             </Modal>
                         </div>
                     ) : (

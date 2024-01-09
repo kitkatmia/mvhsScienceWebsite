@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { Button } from "@mui/material";
 
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
@@ -77,12 +78,14 @@ function AuthShowcase() {
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {/* {secretMessage && <span> - {secretMessage}</span>} */}
       </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-black no-underline transition hover:bg-white/20"
+      <Button
+        variant="outlined"
+        color="success"
+        // className="rounded-full bg-white/10 px-10 py-3 font-semibold text-black no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
-      </button>
+      </Button>
     </div>
   );
 }
