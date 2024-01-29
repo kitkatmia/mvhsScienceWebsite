@@ -1,64 +1,98 @@
 'use client'
-import React from 'react';
-import Button from '@mui/joy/Button';
-import ButtonGroup from '@mui/joy/ButtonGroup';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
-import { IconButton } from '@mui/material';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-// modal
+// Modal
 import Modal from '@mui/material/Modal';
-import { useState } from 'react';
 import SettingsBox from './SettingsBox';
+import { api } from '~/utils/api';
+
+interface UserProps {
+    subjects: string[],
+    rooms: string[],
+    name: string,
+    school: string
+}
 
 export default function NavBar() {
     const { data: session } = useSession();
-
-    const [open, setOpen] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const handleSubmit = (userProps: UserProps) => {
+        const mutation = api.user.upsertUserAccount.useMutation()
+
+        mutation.mutate(userProps, {
+            onSuccess: (data) => {
+                console.log('success!');
+                console.log("new data: ", data);
+            },
+            onError: (error) => {
+                console.log('not success :(');
+                console.log(error);
+            }
+        });
+        // console.log("school: ", userProps.school);
+        // console.log("subject: ", userProps.subjects);
+        // console.log("rooms: ", userProps.rooms);
+        // if (updatedUser != null) {
+        //     console.log('success!')
+        //     console.log("new data: ", updatedUser.data);
+        // } else {
+        //     console.log('not success :(')
+        // }
+    }
+
+      const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
+
     return (
-    <div className='flex justify-between p-4'>
-        <Link href="/" className='text-black no-underline'>MVLA Lab Support</Link>
-        <div className='flex justify-between'>
-            <ButtonGroup aria-label="outlined button group">
-                <Link href="/ordering" passHref>
-                    <Button>Supplies and Ordering</Button>
-                </Link>
-                <Link href="/faq" passHref>
-                    <Button>FAQ</Button>
-                </Link>
-                <a href="https://sites.google.com/mvla.net/mvlasciencelabtech/" target='_blank'>
-                    <Button>General Info</Button>
-                </a>
+        <div className='flex justify-between p-4'>
+            <Link href="/" passHref legacyBehavior>
+                <a className='text-black no-underline'>MVLA Lab Support</a>
+            </Link>
+            <div className='flex justify-between'>
+                <ButtonGroup aria-label="outlined button group">
+                    <Link href="/" passHref legacyBehavior>
+                        <Button component="a">Home</Button>
+                    </Link>
+                    <Link href="/ordering" passHref legacyBehavior>
+                        <Button component="a">Supplies and Ordering</Button>
+                    </Link>
+                    <Link href="/faq" passHref legacyBehavior>
+                        <Button component="a">FAQ</Button>
+                    </Link>
+                    <Button component="a" href="https://sites.google.com/mvla.net/mvlasciencelabtech/" target='_blank'>
+                        General Info
+                    </Button>
                 </ButtonGroup>
                 {session ? (
                     open ? (
-                        <div>
-                            <Modal
+                        <Modal
                             open={open}
                             onClose={handleClose}
-                            style={{ zIndex: 1000 }} // z-index so dropdowns open in front -not behind- modal
-                            >
-                                <div style={{ position: 'relative', zIndex: 1001 }}> 
-                                    <SettingsBox onClose={handleClose}/>
-                                </div>
-                            </Modal>
-                        </div>
+                            style={{ zIndex: 1000 }}
+                            // z-index so dropdowns open in front -not behind- modal
+                        >
+                            <div style={{ position: 'relative', zIndex: 1001 }}>
+                                <SettingsBox onClose={handleClose} onSubmit={handleSubmit}/>
+                            </div>
+                        </Modal>
                     ) : (
-                        // DEBUG: icon should show at all times
                         <IconButton aria-label="settings" onClick={handleOpen}>
                             <SettingsIcon />
                         </IconButton>
                     )
                 ) : (
-                    <Button className='ml-5' variant="outlined" color="success" onClick={() => void signIn()}>Sign-in</Button>
+                    <Button className='ml-5' variant="outlined" color="success" onClick={() => signIn()}>Sign-in</Button>
                 )}
-             
+            </div>
         </div>
-    </div>
-
-  );
+    );
 }

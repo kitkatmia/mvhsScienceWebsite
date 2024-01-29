@@ -1,21 +1,28 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
-import { Avatar, TextField, Typography, Autocomplete, Chip, AutocompleteChangeReason, AutocompleteChangeDetails } from '@mui/material';
-import { Session } from 'next-auth';
-import { Option, Select } from '@mui/joy';
-import { Chip as JoyChip } from "@mui/joy";
-import { SyntheticEvent } from 'react';
+import Avatar from '@mui/material/Avatar';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Autocomplete from '@mui/material/Autocomplete';
+import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { useSession } from 'next-auth/react';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
+interface UserProps {
+  name: string,
+  school: string
+  subjects: string[],
+  rooms: string[],
+}
 
-const SettingsBox = ({ onClose }: { onClose: () => void }) => {
-    const { data: session } = useSession();
-    // Session | null
-    // DEBUG: this should be in a context / env file, so that it can be editable
-    const subjects = [
+const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void }) => {
+  const { data: session } = useSession();
+  const subjects = [
     "Pre-Bio",
     "Human Biology",
     "Biology",
@@ -34,128 +41,125 @@ const SettingsBox = ({ onClose }: { onClose: () => void }) => {
     "Agricultural Ecology",
     "ASI",
     "Forensics",
-    ];
+  ];
 
-    const [selectedSchool, setSelectedSchool] = useState<String>('MVHS');
-    const [name, setName] = useState<String>(session?.user.name? session?.user.name: "");
-    const [selectedSubjects, setSelectedSubjects] = useState<String[]>([]);
-    const [selectedRooms, setSelectedRooms] = useState<String[]>([]);
+  const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
+  const [name, setName] = useState<string>(session?.user.name || '');
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
 
-  const handleCancelClick = () => {
+  // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
+
+  const handleSchoolChange = (event: SelectChangeEvent) => {
+    setSelectedSchool(event.target.value as string);
+  };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { setName(event.target.value); };
+
+  // const handleSubjectsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  //     setSelectedSubjects(event.target.value as string[]);
+  // };
+  const handleSubjectsChange = (event: SelectChangeEvent<typeof selectedSubjects>) => {
+    const { target: { value } } = event;
+    setSelectedSubjects(typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const ITEM_HEIGHT = 72;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const handleRoomChange = (event: React.SyntheticEvent, value: string[]) => {
+    setSelectedRooms(value);
+  };
+
+  const handleSubmit = () => {
+    onSubmit({ name: name, school: selectedSchool, subjects: selectedSubjects, rooms: selectedRooms });
     onClose();
   };
 
-    const handleSchoolChange = (event: any, newSchool: String | null) => {setSelectedSchool(newSchool? newSchool:"")};
-
-    const handleNameChange = (name: string | React.SetStateAction<String>) => {setName(name)}
-
-    const handleRoomChange = (event: SyntheticEvent<Element, Event>, value: string[], reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<string> | undefined) => {
-        setSelectedRooms(value)
-    }
-
-    const handleSubjectsChange = (event: any, newSelectedValues: React.SetStateAction<String[]>) => {
-        setSelectedSubjects(newSelectedValues);
-    }
-    const handleSubmit = () => {
-        // DEBUG: need to add router logic here
-        // Handle submit logic here, e.g., send data to a server
-        console.log({"name": name, "school": selectedSchool, "subjects": selectedSubjects, "rooms": selectedRooms})
-        // return { "name": name, "school": selectedSchool, "subjects": selectedSubjects, "rooms": selectedRooms }
-        handleCancelClick();
-    };
-
-    return (
-    <Box
-      className="w-1/2 my-12 m-auto flex flex-col items-center justify-center p-4 bg-white rounded-md shadow-md"
-    >
-        <Typography variant="h6" textAlign="left" className="w-full flex justify-between">
-            <div>
-                Settings for {session?.user.name}
-            </div>
-            <div>
-                {session?.user.image && (
-                    <Avatar alt="User Pic" src={session?.user.image} />
-                )}
-            </div>
-        </Typography>
+  return (
+    <Box className="w-1/2 my-12 m-auto flex flex-col items-center justify-center p-4 bg-white rounded-md shadow-md">
+      <Typography variant="h6" textAlign="left" className="w-full flex justify-between">
+        <div>
+          Settings for {session?.user.name}
+        </div>
+        <div>
+          {session?.user.image && (
+            <Avatar alt="User Pic" src={session?.user.image} />
+          )}
+        </div>
+      </Typography>
       <div className="mt-4">
         <div className='mb-4'>
-            <TextField
+          <TextField
             label="Name (first and last)"
-            defaultValue={session?.user.name}
+            value={name}
             variant="outlined"
             className='grayscale-0'
-            onChange={(event) => handleNameChange(event.target.value)}
-            />
+            onChange={handleNameChange}
+            disabled={true} // DEBUG: may change later
+          />
         </div>
-        <div className="mb-4">
-          <label htmlFor="school">School:</label>
+        <FormControl fullWidth className="mb-4">
+          <InputLabel id="school-label">School</InputLabel>
           <Select
-            id="school"
+            labelId="school-label"
+            id="school-select"
             value={selectedSchool}
-            onChange={(e, newValue) => handleSchoolChange(e, newValue)}
+            label="School"
+            onChange={handleSchoolChange}
           >
-            <Option value="MVHS">MVHS</Option>
-            <Option value="LAHS">LAHS</Option>
+            <MenuItem value="MVHS">MVHS</MenuItem>
+            <MenuItem value="LAHS">LAHS</MenuItem>
           </Select>
-        </div>
-        <div className="mb-4">
-            <label htmlFor="subjects">Select Subject(s) Taught:</label>
-            <Select
+        </FormControl>
+        <FormControl fullWidth className="mb-4">
+          <InputLabel id="subjects-label">Select Subject(s) Taught</InputLabel>
+          <Select
+            labelId="subjects-label"
+            id="subjects-select"
             multiple
+            value={selectedSubjects}
+            input={<OutlinedInput label="Select Subject(s) Taught" />}
             onChange={handleSubjectsChange}
-            renderValue={(selected) => (
-                <Box sx={{ display: 'flex', gap: '0.25rem' }}>
-                {selected.map((selectedOption) => (
-                    <JoyChip variant="soft" color="primary">
-                    {selectedOption.label}
-                    </JoyChip>
-                ))}
-                </Box>
-            )}
-            sx={{
-                minWidth: '15rem',
-            }}
-            slotProps={{
-                listbox: {
-                sx: {
-                    width: '100%',
-                },
-                },
-            }}
-            >
+            MenuProps={MenuProps}
+          >
             {subjects.map((subject, index) => (
-            <Option key={index} value={subject}>
-                {subject}
-            </Option>
+              <MenuItem key={index} value={subject}>{subject}</MenuItem>
             ))}
-            </Select>
-        </div>
+          </Select>
+        </FormControl>
         <div className='mb-4'>
-            <Autocomplete
-                multiple
-                id="tags-filled"
-                options={[]}
-                freeSolo
-                onChange={handleRoomChange}
-                renderTags={(value: readonly string[], getTagProps) =>
-                value.map((option: string, index: number) => (
-                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                ))
-                }
-                renderInput={(params) => (
-                <TextField
-                    {...params}
-                    variant="filled"
-                    label="Enter room number(s)"
-                    placeholder="Ex: 101; Enter to confirm."
-                />
-                )}
-            />
+          <Autocomplete
+            multiple
+            id="tags-filled"
+            options={[]}
+            freeSolo
+            onChange={handleRoomChange}
+            renderTags={(value: readonly string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Enter room number(s)"
+                placeholder="Ex: 101; Enter to confirm."
+              />
+            )}
+          />
         </div>
         <div className="flex justify-between">
-          <Button variant="outlined" onClick={handleCancelClick}>
-            {/* onClick={() => {console.log('cancelpls')}} */}
+          <Button variant="outlined" onClick={onClose}>
             Cancel
           </Button>
           <Button variant='contained' onClick={handleSubmit}>
@@ -164,6 +168,7 @@ const SettingsBox = ({ onClose }: { onClose: () => void }) => {
         </div>
       </div>
     </Box>
-    );
-}
-export default SettingsBox
+  );
+};
+
+export default SettingsBox;
