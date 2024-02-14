@@ -6,4 +6,8 @@ export default {
     extend: {},
   },
   plugins: [],
+  // need coreplugins so that mui overrides tailwind
+  corePlugins: {
+    preflight: false,
+  },
 } satisfies Config;
