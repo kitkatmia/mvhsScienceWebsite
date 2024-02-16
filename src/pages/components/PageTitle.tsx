@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Title = {
-    title: String
+    title: string
 }
 
 const PageTitle = ({ title }: Title) => {
