@@ -90,7 +90,14 @@ export default function NavBar() {
                         </IconButton>
                     )
                 ) : (
-                    <Button className='ml-5' variant="outlined" color="success" onClick={() => signIn()}>Sign-in</Button>
+                    <Button className='ml-5' variant="outlined" color="success" onClick={
+                    () => {
+                        // DEBUG: probably a better way of handling this
+                        signIn().catch(error => {
+                        console.error("Error signing in", error);
+                        }
+                    );
+                    }}>Sign-in</Button>
                 )}
             </div>
         </div>

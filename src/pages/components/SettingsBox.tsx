@@ -44,14 +44,14 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
   ];
 
   const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
-  const [name, setName] = useState<string>(session?.user.name || '');
+  const [name, setName] = useState<string>(session?.user.name ?? '');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
 
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
 
   const handleSchoolChange = (event: SelectChangeEvent) => {
-    setSelectedSchool(event.target.value as string);
+    setSelectedSchool(event.target.value);
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { setName(event.target.value); };
@@ -145,7 +145,8 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
-                <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                // DEBUG: not sure if this is gonna work now -- I was just trying to get rid of eslint error
+                <Chip variant="outlined" label={option} {...getTagProps({ index })} key={index} />
               ))
             }
             renderInput={(params) => (
