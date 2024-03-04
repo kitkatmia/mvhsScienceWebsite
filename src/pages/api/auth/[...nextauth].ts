@@ -5,7 +5,6 @@
 // export default NextAuth(authOptions);
 
 import NextAuth, { type NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -27,7 +26,7 @@ export const authOptions: NextAuthOptions = {
           select: { role: true },
         });
 
-        session.user.role = userRole?.role || 1;
+        session.user.role = userRole?.role ?? 0;
       }
       return session;
     },
