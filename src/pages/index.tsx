@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import { Button } from "@mui/material";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
 
   return (
     <>
@@ -22,10 +22,10 @@ export default function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight text-black sm:text-[5rem]">
             MVLA Lab Support
           </h1>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-black">
+          <div className="flex flex-col items-center">
+            {/* <p className="text-2xl text-black">
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-            </p>
+            </p> */}
             <AuthShowcase />
           </div>
         </div>
