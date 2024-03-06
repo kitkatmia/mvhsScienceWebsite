@@ -34,9 +34,9 @@ export default function NavBar() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = (userProps: UserProps) => {
-        const mutation = api.user.upsertUserAccount.useMutation() // userProps??
+    const mutation = api.user.upsertUserAccount.useMutation();
 
+    const handleSubmit = (userProps: UserProps) => {
         mutation.mutate(userProps, {
             onSuccess: (data) => {
                 console.log('success!');
@@ -47,18 +47,7 @@ export default function NavBar() {
                 console.log(error);
             }
         });
-        // console.log("school: ", userProps.school);
-        // console.log("subject: ", userProps.subjects);
-        // console.log("rooms: ", userProps.rooms);
-        // if (updatedUser != null) {
-        //     console.log('success!')
-        //     console.log("new data: ", updatedUser.data);
-        // } else {
-        //     console.log('not success :(')
-        // }
     }
-
-    //   const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
 
     return (
         <div className='flex justify-between p-4'>
