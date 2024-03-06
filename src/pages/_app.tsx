@@ -12,7 +12,7 @@ import "~/styles/globals.css";
 import {experimental_extendTheme as materialExtendTheme, Experimental_CssVarsProvider as MaterialCssVarsProvider, THEME_ID as MATERIAL_THEME_ID,} from '@mui/material/styles';
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { StyledEngineProvider } from '@mui/material/styles';
+// import { StyledEngineProvider } from '@mui/material/styles';
 
 
 const materialTheme = materialExtendTheme();
