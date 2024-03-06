@@ -24,8 +24,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       {/* <StyledEngineProvider injectFirst> */}
-        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode='dark'>
-              <JoyCssVarsProvider defaultMode='dark'>
+        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode='light'>
+              <JoyCssVarsProvider defaultMode='light'>
                 <CssBaseline enableColorScheme />
                 <Component {...pageProps} />
               </JoyCssVarsProvider>

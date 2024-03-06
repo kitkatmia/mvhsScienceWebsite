@@ -13,6 +13,14 @@ import Modal from '@mui/material/Modal';
 import SettingsBox from './SettingsBox';
 import { api } from '~/utils/api';
 
+
+// const UserProps = z.object({
+//   name: z.string().optional(),
+//   school: z.string().optional(),
+//   subjects: z.array(z.string()),
+//   rooms: z.array(z.string()),
+// });
+
 interface UserProps {
     subjects: string[],
     rooms: string[],
@@ -27,7 +35,7 @@ export default function NavBar() {
     const handleClose = () => setOpen(false);
 
     const handleSubmit = (userProps: UserProps) => {
-        const mutation = api.user.upsertUserAccount.useMutation()
+        const mutation = api.user.upsertUserAccount.useMutation() // userProps??
 
         mutation.mutate(userProps, {
             onSuccess: (data) => {
@@ -50,7 +58,7 @@ export default function NavBar() {
         // }
     }
 
-      const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
+    //   const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
 
     return (
         <div className='flex justify-between p-4'>
@@ -71,6 +79,14 @@ export default function NavBar() {
                     <Button component="a" href="https://sites.google.com/mvla.net/mvlasciencelabtech/" target='_blank'>
                         General Info
                     </Button>
+                    {
+                        session ? (<Button component="a" href="/order_status">
+                        Order Status
+                        </Button>)
+                            : (
+                               <div></div>
+                            )
+                    }
                 </ButtonGroup>
                 {session ? (
                     open ? (
@@ -90,7 +106,14 @@ export default function NavBar() {
                         </IconButton>
                     )
                 ) : (
-                    <Button className='ml-5' variant="outlined" color="success" onClick={() => signIn()}>Sign-in</Button>
+                    <Button className='ml-5' variant="outlined" color="success" onClick={
+                    () => {
+                        // DEBUG: probably a better way of handling this
+                        signIn().catch(error => {
+                        console.error("Error signing in", error);
+                        }
+                    );
+                    }}>Sign-in</Button>
                 )}
             </div>
         </div>

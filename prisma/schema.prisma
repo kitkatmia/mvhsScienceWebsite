@@ -64,7 +64,12 @@ model User {
   accounts      Account[]
   sessions      Session[]
   location      String?
-  UserAccount   UserAccount[]
+  //UserAccount   UserAccount[]
+  role          Int?         @default(0)
+    subjects      Subject[]
+    rooms         Room[]
+    school        String?
+    UserAccount   UserAccount?
   Order         Order[]
   Comment       Comment[]
 }
@@ -84,19 +89,24 @@ model UserAccount {
 
 // bc prisma doesn't allow primitive arrays to be stored
 model Subject {
-  id            String       @id @default(cuid())
-  name          String
-  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-  userAccountId String?
+
+    id            String       @id @default(cuid())
+    name          String
+    userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+    userAccountId String?
+    User          User?        @relation(fields: [userId], references: [id])
+    userId        String?
 
   @@index([userAccountId])
 }
 
 model Room {
-  id            String       @id @default(cuid())
-  number        String
-  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-  userAccountId String?
+    id            String       @id @default(cuid())
+    number        String
+    userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+    userAccountId String?
+    User          User?        @relation(fields: [userId], references: [id])
+    userId        String?
 
   @@index([userAccountId])
 }
