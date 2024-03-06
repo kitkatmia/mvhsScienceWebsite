@@ -2,104 +2,141 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "mysql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
-    // DEBUG: referentialIntegrity important?
+  provider     = "mysql"
+  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+  // Further reading:
+  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+  // DEBUG: referentialIntegrity important?
 }
 
 model Example {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([name])
+  @@index([name])
 }
 
 // Necessary for Next auth
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
-    id            String        @id @default(cuid())
-    name          String?
-    email         String?       @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    location      String?
-    UserAccount   UserAccount[]
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  location      String?
+  UserAccount   UserAccount[]
+  Order         Order[]
+  Comment       Comment[]
 }
 
 model UserAccount {
-    id       String    @id @default(cuid())
-    email    String?   @unique
-    name     String?
-    school   String?
-    subjects Subject[]
-    rooms    Room[]
-    userId   String    @unique
-    user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String    @id @default(cuid())
+  email    String?   @unique
+  name     String?
+  school   String?
+  subjects Subject[]
+  rooms    Room[]
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
+  @@index([userId])
 }
 
 // bc prisma doesn't allow primitive arrays to be stored
 model Subject {
-    id            String       @id @default(cuid())
-    name          String
-    userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-    userAccountId String?
+  id            String       @id @default(cuid())
+  name          String
+  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+  userAccountId String?
 
-    @@index([userAccountId])
+  @@index([userAccountId])
 }
 
 model Room {
-    id            String       @id @default(cuid())
-    number        String
-    userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-    userAccountId String?
+  id            String       @id @default(cuid())
+  number        String
+  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+  userAccountId String?
 
-    @@index([userAccountId])
+  @@index([userAccountId])
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
+}
+
+model Order {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  date        DateTime
+  status      Status
+  comments    Comment[]
+  categories  String
+  description String
+
+  @@index([userId])
+}
+
+enum Status {
+    In_Progress
+    Complete
+    Not_Started
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  contents String
+  user     User   @relation(fields: [userId], references: [id])
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+  userId  String
+
+  @@index([userId])
+  @@index([orderId])
 }
