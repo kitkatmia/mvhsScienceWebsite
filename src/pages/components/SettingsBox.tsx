@@ -13,15 +13,29 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useSession } from 'next-auth/react';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import { api } from '~/utils/api';
 
-interface UserProps {
-  name: string,
-  school: string
+interface UserDefaultProps {
+  school: string,
   subjects: string[],
   rooms: string[],
 }
 
-const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void }) => {
+interface UserProps {
+  name: string,
+  school: string
+  subjects: string,
+  rooms: string,
+}
+
+const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void}) => {
+  const userQuery = api.user.getUserInfo.useQuery();
+  const defaultRooms = userQuery.data?.rooms
+  const defaultSubjects = userQuery.data?.subjects
+  // : String | null | undefined
+  console.log("before query: ", defaultSubjects)
+  const defaultSchool = userQuery.data?.school
+  
   const { data: session } = useSession();
   const subjects = [
     "Pre-Bio",
@@ -46,9 +60,10 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
 
   const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
   const [name, setName] = useState<string>(session?.user.name ?? '');
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>(defaultSubjects ? JSON.parse(defaultSubjects): []);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>(defaultRooms ? JSON.parse(defaultRooms): []);
 
+  console.log("info: ", selectedSchool, " ", selectedSubjects, " ", selectedRooms)
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
 
   const handleSchoolChange = (event: SelectChangeEvent) => {
@@ -81,7 +96,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
   };
 
   const handleSubmit = () => {
-    onSubmit({ name: name, school: selectedSchool, subjects: selectedSubjects, rooms: selectedRooms });
+    onSubmit({ name: name, school: selectedSchool, subjects: JSON.stringify(selectedSubjects), rooms: JSON.stringify(selectedRooms) });
     onClose();
   };
 
@@ -113,6 +128,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
           <Select
             labelId="school-label"
             id="school-select"
+            defaultValue={defaultSchool ? defaultSchool: "MVHS"}
             value={selectedSchool}
             label="School"
             onChange={handleSchoolChange}
@@ -146,7 +162,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
-                // DEBUG: not sure if this is gonna work now -- I was just trying to get rid of eslint error
+                
                 <Chip variant="outlined" label={option} {...getTagProps({ index })} key={index} />
               ))
             }

@@ -26,8 +26,8 @@ export const userRouter = createTRPCRouter({
     .input(z.object({
       name: z.string(),
       school: z.string().optional(),
-      subjects: z.array(z.string()),
-      rooms: z.array(z.string())
+      subjects: z.string(),
+      rooms: z.string()
     }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
@@ -40,31 +40,35 @@ export const userRouter = createTRPCRouter({
             userId,
             name: input.name,
             school: input.school,
-            subjects: {
-              create: input.subjects.map((subject) => ({ name: subject })),
-            },
-            rooms: {
-              create: input.rooms.map((room) => ({ number: room })),
-            },
+            subjects: input.subjects,
+            rooms: input.rooms
+            // subjects: {
+            //   create: input.subjects.map((subject) => ({ name: subject })),
+            // },
+            // rooms: {
+            //   create: input.rooms.map((room) => ({ number: room })),
+            // },
           },
           update: {
             name: input.name,
             school: input.school,
-            subjects: {
-              // if update, delete then create new
-              deleteMany: { userAccountId: userId },
-              create: input.subjects.map((subject) => ({ name: subject })),
-            },
-            rooms: {
-              // same as subjects
-              deleteMany: { userAccountId: userId },
-              create: input.rooms.map((room) => ({ number: room })),
-            },
+            subjects: input.subjects,
+            rooms: input.rooms
+            // subjects: {
+            //   // if update, delete then create new
+            //   deleteMany: { userAccountId: userId },
+            //   create: input.subjects.map((subject) => ({ name: subject })),
+            // },
+            // rooms: {
+            //   // same as subjects
+            //   deleteMany: { userAccountId: userId },
+            //   create: input.rooms.map((room) => ({ number: room })),
+            // },
           },
-          include: {
-            subjects: true,
-            rooms: true,
-          },
+          // include: {
+          //   subjects: true,
+          //   rooms: true,
+          // },
         });
 
         return upsertedUserAccount;
@@ -75,10 +79,10 @@ export const userRouter = createTRPCRouter({
   getUserInfo: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.db.userAccount.findUnique({
       where: { userId: ctx.session.user.id },
-      include: {
-        subjects: true,
-        rooms: true,
-      },
+      // include: {
+      //   subjects: true,
+      //   rooms: true,
+      // },
     })
     return user;
   }),
@@ -87,10 +91,10 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.userAccount.findUnique({
         where: { email: input.email },
-        include: {
-          subjects: true,
-          rooms: true,
-        },
+        // include: {
+        //   subjects: true,
+        //   rooms: true,
+        // },
       });
 
       if (!user) {

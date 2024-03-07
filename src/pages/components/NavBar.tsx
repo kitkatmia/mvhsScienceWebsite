@@ -22,8 +22,8 @@ import { api } from '~/utils/api';
 // });
 
 interface UserProps {
-    subjects: string[],
-    rooms: string[],
+    subjects: string,
+    rooms: string,
     name: string,
     school: string
 }
@@ -35,6 +35,16 @@ export default function NavBar() {
     const handleClose = () => setOpen(false);
 
     const mutation = api.user.upsertUserAccount.useMutation();
+    // const userQuery = api.user.getUserInfo.useQuery();
+    // var defaultValues = null
+    // if (userQuery.data != null) {
+    //     const defaultRooms = userQuery.data?.rooms
+    //     const defaultSubjects = userQuery.data?.subjects
+    //     const defaultSchool = userQuery.data?.school
+    //     defaultValues = {school: defaultSchool, subjects: defaultSubjects, rooms:defaultRooms}
+    // }
+
+    
 
     const handleSubmit = (userProps: UserProps) => {
         mutation.mutate(userProps, {
@@ -86,7 +96,7 @@ export default function NavBar() {
                             // z-index so dropdowns open in front -not behind- modal
                         >
                             <div style={{ position: 'relative', zIndex: 1001 }}>
-                                <SettingsBox onClose={handleClose} onSubmit={handleSubmit}/>
+                                <SettingsBox onClose={handleClose} onSubmit={handleSubmit} />
                             </div>
                         </Modal>
                     ) : (
