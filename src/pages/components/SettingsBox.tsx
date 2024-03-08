@@ -16,12 +16,6 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { api } from '~/utils/api';
 import { EastTwoTone } from '@mui/icons-material';
 
-interface UserDefaultProps {
-  school: string,
-  subjects: string[],
-  rooms: string[],
-}
-
 interface UserProps {
   name: string,
   school: string
@@ -31,11 +25,7 @@ interface UserProps {
 
 const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void}) => {
   const userQuery = api.user.getUserInfo.useQuery();
-  // const defaultRooms = userQuery.data?.rooms
-  // const defaultSubjects = userQuery.data?.subjects
-  // : String | null | undefined
-  // useEffect for queries; set states
-  // const defaultSchool = userQuery.data?.school
+
   const { data: session } = useSession();
   const subjects = [
     "Pre-Bio",
@@ -58,11 +48,11 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
     "Forensics",
   ];
 
-  var defaultRooms = userQuery.data?.rooms
-  var defaultSubjects = userQuery.data?.subjects
-  var defaultSchool = userQuery.data?.school
+  let defaultRooms = userQuery.data?.rooms
+  let defaultSubjects = userQuery.data?.subjects
+  let defaultSchool = userQuery.data?.school
 
-  console.log("default Rooms: ", defaultRooms)
+  // console.log("default Rooms: ", defaultRooms)
 
   const [selectedSchool, setSelectedSchool] = useState<string>(defaultSchool ? defaultSchool : 'MVHS');
   const [name, setName] = useState<string>(session?.user.name ?? '');
@@ -79,8 +69,6 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
     setSelectedSubjects(defaultSubjects ? JSON.parse(defaultSubjects) : [])
     setSelectedRooms(defaultRooms ? JSON.parse(defaultRooms): [])
 
-    // console.log("info: ", selectedSchool, " ", selectedSubjects, " ", selectedRooms)
-    // useEffect for queries; set states
   }, [defaultRooms, defaultSubjects, defaultSchool]);
   
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
