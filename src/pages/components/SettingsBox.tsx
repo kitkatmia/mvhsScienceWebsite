@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useSession } from 'next-auth/react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { api } from '~/utils/api';
+import { EastTwoTone } from '@mui/icons-material';
 
 interface UserDefaultProps {
   school: string,
@@ -30,12 +31,7 @@ interface UserProps {
 
 const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void}) => {
   const userQuery = api.user.getUserInfo.useQuery();
-  const defaultRooms = userQuery.data?.rooms
-  const defaultSubjects = userQuery.data?.subjects
-  // : String | null | undefined
-  console.log("before query: ", defaultSubjects)
-  const defaultSchool = userQuery.data?.school
-  
+
   const { data: session } = useSession();
   const subjects = [
     "Pre-Bio",
@@ -58,12 +54,29 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
     "Forensics",
   ];
 
-  const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
+  let defaultRooms = userQuery.data?.rooms
+  let defaultSubjects = userQuery.data?.subjects
+  let defaultSchool = userQuery.data?.school
+
+  // console.log("default Rooms: ", defaultRooms)
+
+  const [selectedSchool, setSelectedSchool] = useState<string>(defaultSchool ? defaultSchool : 'MVHS');
   const [name, setName] = useState<string>(session?.user.name ?? '');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(defaultSubjects ? JSON.parse(defaultSubjects): []);
   const [selectedRooms, setSelectedRooms] = useState<string[]>(defaultRooms ? JSON.parse(defaultRooms): []);
 
-  console.log("info: ", selectedSchool, " ", selectedSubjects, " ", selectedRooms)
+
+  useEffect(() => {
+    defaultRooms = userQuery.data?.rooms
+    defaultSubjects = userQuery.data?.subjects
+    defaultSchool = userQuery.data?.school
+
+    setSelectedSchool(defaultSchool ? defaultSchool : 'MVHS')
+    setSelectedSubjects(defaultSubjects ? JSON.parse(defaultSubjects) : [])
+    setSelectedRooms(defaultRooms ? JSON.parse(defaultRooms): [])
+
+  }, [defaultRooms, defaultSubjects, defaultSchool]);
+  
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
 
   const handleSchoolChange = (event: SelectChangeEvent) => {
