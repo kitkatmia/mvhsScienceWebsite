@@ -172,6 +172,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             id="tags-filled"
             options={[]}
             freeSolo
+            value={selectedRooms}
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
