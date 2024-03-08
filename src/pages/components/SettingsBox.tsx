@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -14,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { useSession } from 'next-auth/react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { api } from '~/utils/api';
-import { EastTwoTone } from '@mui/icons-material';
 
 interface UserDefaultProps {
   school: string,
@@ -31,11 +30,12 @@ interface UserProps {
 
 const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void}) => {
   const userQuery = api.user.getUserInfo.useQuery();
-  // const defaultRooms = userQuery.data?.rooms
-  // const defaultSubjects = userQuery.data?.subjects
+  const defaultRooms = userQuery.data?.rooms
+  const defaultSubjects = userQuery.data?.subjects
   // : String | null | undefined
-  // useEffect for queries; set states
-  // const defaultSchool = userQuery.data?.school
+  console.log("before query: ", defaultSubjects)
+  const defaultSchool = userQuery.data?.school
+  
   const { data: session } = useSession();
   const subjects = [
     "Pre-Bio",
@@ -58,31 +58,12 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
     "Forensics",
   ];
 
-  var defaultRooms = userQuery.data?.rooms
-  var defaultSubjects = userQuery.data?.subjects
-  var defaultSchool = userQuery.data?.school
-
-  console.log("default Rooms: ", defaultRooms)
-
-  const [selectedSchool, setSelectedSchool] = useState<string>(defaultSchool ? defaultSchool : 'MVHS');
+  const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
   const [name, setName] = useState<string>(session?.user.name ?? '');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(defaultSubjects ? JSON.parse(defaultSubjects): []);
   const [selectedRooms, setSelectedRooms] = useState<string[]>(defaultRooms ? JSON.parse(defaultRooms): []);
 
-
-  useEffect(() => {
-    defaultRooms = userQuery.data?.rooms
-    defaultSubjects = userQuery.data?.subjects
-    defaultSchool = userQuery.data?.school
-
-    setSelectedSchool(defaultSchool ? defaultSchool : 'MVHS')
-    setSelectedSubjects(defaultSubjects ? JSON.parse(defaultSubjects) : [])
-    setSelectedRooms(defaultRooms ? JSON.parse(defaultRooms): [])
-
-    // console.log("info: ", selectedSchool, " ", selectedSubjects, " ", selectedRooms)
-    // useEffect for queries; set states
-  }, [defaultRooms, defaultSubjects, defaultSchool]);
-  
+  console.log("info: ", selectedSchool, " ", selectedSubjects, " ", selectedRooms)
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
 
   const handleSchoolChange = (event: SelectChangeEvent) => {
@@ -91,6 +72,9 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { setName(event.target.value); };
 
+  // const handleSubjectsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  //     setSelectedSubjects(event.target.value as string[]);
+  // };
   const handleSubjectsChange = (event: SelectChangeEvent<typeof selectedSubjects>) => {
     const { target: { value } } = event;
     setSelectedSubjects(typeof value === 'string' ? value.split(',') : value);
@@ -175,10 +159,10 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             id="tags-filled"
             options={[]}
             freeSolo
-            value={selectedRooms}
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
+                
                 <Chip variant="outlined" label={option} {...getTagProps({ index })} key={index} />
               ))
             }
