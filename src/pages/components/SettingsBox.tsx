@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -15,6 +15,12 @@ import { useSession } from 'next-auth/react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { api } from '~/utils/api';
 import { EastTwoTone } from '@mui/icons-material';
+
+interface UserDefaultProps {
+  school: string,
+  subjects: string[],
+  rooms: string[],
+}
 
 interface UserProps {
   name: string,
@@ -79,6 +85,9 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { setName(event.target.value); };
 
+  // const handleSubjectsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  //     setSelectedSubjects(event.target.value as string[]);
+  // };
   const handleSubjectsChange = (event: SelectChangeEvent<typeof selectedSubjects>) => {
     const { target: { value } } = event;
     setSelectedSubjects(typeof value === 'string' ? value.split(',') : value);
@@ -163,10 +172,10 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             id="tags-filled"
             options={[]}
             freeSolo
-            value={selectedRooms}
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
+                
                 <Chip variant="outlined" label={option} {...getTagProps({ index })} key={index} />
               ))
             }
