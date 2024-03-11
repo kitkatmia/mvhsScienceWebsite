@@ -35,17 +35,6 @@ export default function NavBar() {
     const handleClose = () => setOpen(false);
 
     const mutation = api.user.upsertUserAccount.useMutation();
-    // const userQuery = api.user.getUserInfo.useQuery();
-    // var defaultValues = null
-    // if (userQuery.data != null) {
-    //     const defaultRooms = userQuery.data?.rooms
-    //     const defaultSubjects = userQuery.data?.subjects
-    //     const defaultSchool = userQuery.data?.school
-    //     defaultValues = {school: defaultSchool, subjects: defaultSubjects, rooms:defaultRooms}
-    // }
-
-    
-
     const handleSubmit = (userProps: UserProps) => {
         mutation.mutate(userProps, {
             onSuccess: (data) => {
@@ -69,9 +58,6 @@ export default function NavBar() {
                     <Link href="/" passHref legacyBehavior>
                         <Button component="a">Home</Button>
                     </Link>
-                    <Link href="/ordering" passHref legacyBehavior>
-                        <Button component="a">Supplies and Ordering</Button>
-                    </Link>
                     <Link href="/faq" passHref legacyBehavior>
                         <Button component="a">FAQ</Button>
                     </Link>
@@ -79,9 +65,11 @@ export default function NavBar() {
                         General Info
                     </Button>
                     {
-                        session ? (<Button component="a" href="/order_status">
+                        session ? (
+                            <Button component="a" href="/order_status">
                         Order Status
-                        </Button>)
+                            </Button>
+                        )
                             : (
                                <div></div>
                             )

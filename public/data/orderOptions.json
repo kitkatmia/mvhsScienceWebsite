@@ -1,0 +1,12 @@
+{
+    "Lab SetUp Request": {
+        "body": "Use this form to request that a lab be set up in your classroom. Lab SetUp includes reagent prep, aliquotting, and equipment and lab station setup.",
+        "imageName": "abc.png",
+        "extraInfoLink": "https://docs.google.com/document/d/16SP_6llD6TaXJ7R1kU1y95AshXhKixFkigbM4RLE0n0/edit"
+    },
+    "Supplies Order Request": {
+        "body": "Use this form to request any consumables or small equipment items. For larger items, please check in with the Dept Chair.",
+        "imageName": "abc.png",
+        "extraInfoLink": ""
+    }
+}
