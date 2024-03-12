@@ -66,6 +66,16 @@ export default function NavBar() {
                     </Button>
                     {
                         session ? (
+                            <Button component="a" href="/ordering">
+                        Orders
+                            </Button>
+                        )
+                            : (
+                               <div></div>
+                            )
+                    }
+                    {
+                        session ? (
                             <Button component="a" href="/order_status">
                         Order Status
                             </Button>

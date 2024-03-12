@@ -12,11 +12,17 @@ const OrderCard = (props: {
     body: string;
     extraInfoLink?: string;
 }) => {
+  const imageUrl = `/images/${props.imageName}`;
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345}}>
       <CardMedia
-        sx={{ height: 140 }}
-        image={"/public/images/"+props.imageName}
+        component="img"
+        sx={{
+          height: 140,
+          width: '100%',
+          objectFit: 'contain ' // might wanna change to cover later
+        }}
+        image={imageUrl}
         title={props.title ? props.title:""}
       />
       <CardContent>
@@ -28,7 +34,11 @@ const OrderCard = (props: {
         </Typography>
       </CardContent>
       <CardActions>
-        {props.extraInfoLink ? <Button size="small">Extra Info</Button>: <div></div>}
+        {props.extraInfoLink ?
+          <a href={props.extraInfoLink} target='_blank'>
+            <Button size="small">Extra Info</Button>
+          </a>
+          : <div></div>}
         <Button size="small">Order</Button>
       </CardActions>
     </Card>
