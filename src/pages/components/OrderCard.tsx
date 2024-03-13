@@ -18,9 +18,9 @@ const OrderCard = (props: {
       <CardMedia
         component="img"
         sx={{
-          height: 140,
+          height: 240,
           width: '100%',
-          objectFit: 'contain ' // might wanna change to cover later
+          objectFit: 'cover' // might wanna change to cover later
         }}
         image={imageUrl}
         title={props.title ? props.title:""}
@@ -36,10 +36,10 @@ const OrderCard = (props: {
       <CardActions>
         {props.extraInfoLink ?
           <a href={props.extraInfoLink} target='_blank'>
-            <Button size="small">Extra Info</Button>
+            <Button size="small" variant='outlined'>Extra Info</Button>
           </a>
           : <div></div>}
-        <Button size="small">Order</Button>
+        <Button size="small" variant="outlined">Order</Button>
       </CardActions>
     </Card>
   );
