@@ -1,0 +1,14 @@
+{
+    "Q1": {
+        "question": "Why can't I access the general info link?",
+        "answer": "You need to be signed into your MVLA account!"
+    },
+    "Q2": {
+        "question": "Where do I need to look for more information about setting up labs?",
+        "answer": "Check out the general info website to get answers about that and a lot more!"
+    },
+    "Q3": {
+        "question": "Uh oh... I got an error! What do I do?",
+        "answer": "Email us at alinka.markova@gmail.com or _____{max's email}___"
+    }
+}

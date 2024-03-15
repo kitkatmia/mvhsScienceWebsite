@@ -3,7 +3,7 @@ import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import PageTitle from './components/PageTitle'
 import { useSession } from 'next-auth/react'
-import { Box, Button, Container, Grid } from '@mui/material'
+import { Box, Container, Grid } from '@mui/material'
 import OrderCard from './components/OrderCard'
 import orderOptions from '../data/orderOptions.json';
 
