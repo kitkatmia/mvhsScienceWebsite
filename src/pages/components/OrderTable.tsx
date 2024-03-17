@@ -15,10 +15,9 @@ const statusMap: Record<Status, string> = {
   In_Progress: "In Progress",
 };
 
-//testing order table
 type OrderWithCommentsAndUser = Order & {
-  comments: (Comment & { user: User })[];
-  user: User;
+  comments: (Comment & { user: User })[] | undefined;
+  user: User | undefined;
 };
 
 export default function OrderTable(props: {
@@ -52,7 +51,7 @@ export default function OrderTable(props: {
         {props.orders.map((e) => (
           <tr key={e.id}>
             <td className="border border-solid border-blue-500 p-2 text-lg">
-              {e.user.name}
+              {e.user?.name}
             </td>
             <td className="border border-solid border-blue-500 p-2 text-lg">
               {e.date.toDateString()}
@@ -73,9 +72,11 @@ export default function OrderTable(props: {
   );
 }
 
-function CommentBox(data: { comments: (Comment & { user: User })[] }) {
+function CommentBox(data: { comments: (Comment & { user: User })[] | undefined }) {
   const [opened, setOpened] = useState(false);
-
+  if (data.comments == undefined) {
+    data.comments = [];
+  }
   return (
     <>
       <Button
