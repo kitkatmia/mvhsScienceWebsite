@@ -3,7 +3,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import PageTitle from "./components/PageTitle";
 import OrderTable from "./components/OrderTable";
-// import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import type { Order, User, Comment } from "@prisma/client";
 import prismaClient from "~/utils/prismaClient";
 import { api } from "~/utils/api";
@@ -53,21 +53,16 @@ type OrderWithCommentsAndUser = Order & {
 // ];
 
 export default function OrderStatus() {
-  // const session = useSession();
+  
+  const session = useSession();
   const emptyOrders: OrderWithCommentsAndUser[] = [];
   const [orders, setOrders] = useState(emptyOrders);
 
-  const orderQuery = api.order.getOrders.useQuery();
-  useEffect(() => {
-    setOrders(orderQuery.data? orderQuery.data : []);
-    console.log(orders);
-  });
   return (
     <>
       <NavBar />
       <PageTitle title="Order Status" />
-      {/* {<div>{(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders}/> "admin view"}</div>} */}
-      <OrderTable orders={orders} />
+      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} />}
       <Footer />
     </>
   );

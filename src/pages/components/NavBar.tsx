@@ -22,8 +22,8 @@ import { api } from '~/utils/api';
 // });
 
 interface UserProps {
-    subjects: string[],
-    rooms: string[],
+    subjects: string,
+    rooms: string,
     name: string,
     school: string
 }
@@ -34,9 +34,8 @@ export default function NavBar() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const mutation = api.user.upsertUserAccount.useMutation();
     const handleSubmit = (userProps: UserProps) => {
-        const mutation = api.user.upsertUserAccount.useMutation() // userProps??
-
         mutation.mutate(userProps, {
             onSuccess: (data) => {
                 console.log('success!');
@@ -47,18 +46,7 @@ export default function NavBar() {
                 console.log(error);
             }
         });
-        // console.log("school: ", userProps.school);
-        // console.log("subject: ", userProps.subjects);
-        // console.log("rooms: ", userProps.rooms);
-        // if (updatedUser != null) {
-        //     console.log('success!')
-        //     console.log("new data: ", updatedUser.data);
-        // } else {
-        //     console.log('not success :(')
-        // }
     }
-
-    //   const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
 
     return (
         <div className='flex justify-between p-4'>
@@ -70,9 +58,6 @@ export default function NavBar() {
                     <Link href="/" passHref legacyBehavior>
                         <Button component="a">Home</Button>
                     </Link>
-                    <Link href="/ordering" passHref legacyBehavior>
-                        <Button component="a">Supplies and Ordering</Button>
-                    </Link>
                     <Link href="/faq" passHref legacyBehavior>
                         <Button component="a">FAQ</Button>
                     </Link>
@@ -80,9 +65,21 @@ export default function NavBar() {
                         General Info
                     </Button>
                     {
-                        session ? (<Button component="a" href="/order_status">
+                        session ? (
+                            <Button component="a" href="/order">
+                        Order
+                            </Button>
+                        )
+                            : (
+                               <div></div>
+                            )
+                    }
+                    {
+                        session ? (
+                            <Button component="a" href="/order_status">
                         Order Status
-                        </Button>)
+                            </Button>
+                        )
                             : (
                                <div></div>
                             )
@@ -97,7 +94,7 @@ export default function NavBar() {
                             // z-index so dropdowns open in front -not behind- modal
                         >
                             <div style={{ position: 'relative', zIndex: 1001 }}>
-                                <SettingsBox onClose={handleClose} onSubmit={handleSubmit}/>
+                                <SettingsBox onClose={handleClose} onSubmit={handleSubmit} />
                             </div>
                         </Modal>
                     ) : (
