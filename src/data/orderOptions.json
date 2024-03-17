@@ -1,0 +1,47 @@
+{
+    "Lab SetUp Request": {
+        "body": "Use this form to request that a lab be set up in your classroom. Lab SetUp includes reagent prep, aliquotting, and equipment and lab station setup. Helpful info for filling out a lab setup request included in extra info button.",
+        "imageName": "lab_setup_request.png",
+        "extraInfoLink": "https://docs.google.com/document/d/16SP_6llD6TaXJ7R1kU1y95AshXhKixFkigbM4RLE0n0/edit?usp=sharing"
+    },
+    "Supplies Order Request": {
+        "body": "Use this form to request any consumables or small equipment items. For larger items, please check in with the Dept Chair.",
+        "imageName": "supplies_order_request.png",
+        "extraInfoLink": ""
+    },
+    "Stock Solution Request": {
+        "body": "Don't need the whole lab set up? Use this form to request stock solutions in large or small amounts to be prepped and left in your classroom for use when you're ready.",
+        "imageName": "stock_solution_request.png",
+        "extraInfoLink": ""
+    },
+    "Repair/Replace or Maintenance Request": {
+        "body": "Use this form to request an equipment item be repaired or replaced or to request regular maintenance on equipment.",
+        "imageName": "repair_maintenance_request.png",
+        "extraInfoLink": ""
+    },
+    "Lab Breakdown Request": {
+        "body": "Need lab stations, demos, or any other lab activity cleaned up and put away? Use this form to request a lab breakdown.",
+        "imageName": "lab_breakdown_request.png",
+        "extraInfoLink": ""
+    },
+    "Waste Pickup Request": {
+        "body": "Request that chemical or biohazard waste be picked up and disposed of properly with this form.",
+        "imageName": "waste_pickup_request.png",
+        "extraInfoLink": ""
+    },
+    "Demo Set Up": {
+        "body": "Need a demo set up? Can't get it to work the way it does online? Want to build a thermite cannon (see extra info button)? Fill out this form to get help and get the demo optimized and set up to meet curricular goals.",
+        "imageName": "demo_setup_request.png",
+        "extraInfoLink": "https://www.youtube.com/watch?v=JEoqrjFX1yI&feature=youtu.be"
+    },
+    "Glassware Cleaning": {
+        "body": "Use this form to request glassware cleaning or autoclaving. No guarantees, but an acid wash takes care of about 80% of problem glassware stains. If you have TA's, they can use the handy Glassware Washing Guide linked in extra info.",
+        "imageName": "glassware_cleaning_request.png",
+        "extraInfoLink": "https://docs.google.com/document/d/1I7q9qg-lhxqNU2g9HUE1ALlVCYDnyC_UoNN84-HrshQ/edit"
+    },
+    "General Help Request": {
+        "body": "Use this form to request general classroom or project help like labeling, inventory, etc.",
+        "imageName": "general_help_request.png",
+        "extraInfoLink": ""
+    }
+}
