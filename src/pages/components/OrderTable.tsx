@@ -87,7 +87,7 @@ function CommentBox(data: { comments: (Comment & { user: User })[] | undefined }
       </Button>
       <ClickAwayListener onClickAway={() => setOpened(false)}>
         {opened ? (
-          <div className="absolute rounded-lg border-[2px] border-solid border-blue-500 bg-slate-900">
+          <div className="absolute z-10 rounded-lg border-[2px] border-solid border-blue-500 bg-slate-900">
             {data.comments.map((e) => (
               <div key={e.id}>
                 {e.user.image && (
