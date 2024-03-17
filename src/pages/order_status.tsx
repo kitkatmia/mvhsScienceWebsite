@@ -52,7 +52,8 @@ type OrderWithCommentsAndUser = Order & {
 // ];
 
 export default function OrderStatus() {
-  const [orders, setOrders] = useState([]);
+  const emptyOrders: OrderWithCommentsAndUser[] = [];
+  const [orders, setOrders] = useState(emptyOrders);
   // const { data: sessionData } = useSession();
   prismaClient.order.findMany({
     include: {
@@ -63,7 +64,7 @@ export default function OrderStatus() {
       },
       user: true,
     },
-  }).then((res) => setOrders(res))
+  }).then((res) => {setOrders(res);});
   return (
     <>
       <NavBar />
