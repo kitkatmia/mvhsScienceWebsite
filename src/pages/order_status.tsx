@@ -18,16 +18,11 @@ export default function OrderStatus() {
   const emptyOrders: OrderWithCommentsAndUser[] = [];
   const [orders, setOrders] = useState(emptyOrders);
 
-  const orderQuery = api.order.getOrders.useQuery();
-  useEffect(() => {
-    setOrders(orderQuery.data? orderQuery.data : []);
-    console.log(orders);
-  });
   return (
     <>
       <NavBar />
       <PageTitle title="Order Status" />
-      <OrderTable orders={orders} />
+      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} />}
       <Footer />
     </>
   );

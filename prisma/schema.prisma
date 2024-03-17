@@ -16,6 +16,12 @@ datasource db {
   // DEBUG: referentialIntegrity important?
 }
 
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
+
 model Example {
   id        Int      @id @default(autoincrement())
   name      String
@@ -56,61 +62,62 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?      @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   location      String?
   //UserAccount   UserAccount[]
-  role          Int?         @default(0)
-  subjects      Subject[]
-  rooms         Room[]
-  school        String?
-  UserAccount   UserAccount?
-  Order         Order[]
-  Comment       Comment[]
+  role          Int?      @default(0)
+
+  // subjects      Subject[]
+  // rooms         Room[]
+  school      String?
+  UserAccount UserAccount?
+  Order       Order[]
+  Comment     Comment[]
 }
 
 model UserAccount {
-  id       String    @id @default(cuid())
-  email    String?   @unique
+  id       String  @id @default(cuid())
+  email    String? @unique
   name     String?
   school   String?
-  subjects Subject[]
-  rooms    Room[]
-  userId   String    @unique
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects String?
+  rooms    String?
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 // bc prisma doesn't allow primitive arrays to be stored
-model Subject {
-  id            String       @id @default(cuid())
-  name          String
-  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-  userAccountId String?
-  User          User?        @relation(fields: [userId], references: [id])
-  userId        String?
+// model Subject {
+//   id            String       @id @default(cuid())
+//   name          String
+//   userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+//   userAccountId String?
+//   User          User?        @relation(fields: [userId], references: [id])
+//   userId        String?
 
-  @@index([userAccountId])
-  @@index([userId])
-}
+//   @@index([userAccountId])
+//   @@index([userId])
+// }
 
-model Room {
-  id            String       @id @default(cuid())
-  number        String
-  userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
-  userAccountId String?
-  User          User?        @relation(fields: [userId], references: [id])
-  userId        String?
+// model Room {
+//   id            String       @id @default(cuid())
+//   number        String
+//   userAccount   UserAccount? @relation(fields: [userAccountId], references: [id])
+//   userAccountId String?
+//   User          User?        @relation(fields: [userId], references: [id])
+//   userId        String?
 
-  @@index([userAccountId])
-  @@index([userId])
-}
+//   @@index([userAccountId])
+//   @@index([userId])
+// }
 
 model VerificationToken {
   identifier String

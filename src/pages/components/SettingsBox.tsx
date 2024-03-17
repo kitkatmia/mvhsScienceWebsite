@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -13,15 +13,25 @@ import type { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useSession } from 'next-auth/react';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import { api } from '~/utils/api';
+import { EastTwoTone } from '@mui/icons-material';
 
-interface UserProps {
-  name: string,
-  school: string
+interface UserDefaultProps {
+  school: string,
   subjects: string[],
   rooms: string[],
 }
 
-const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void }) => {
+interface UserProps {
+  name: string,
+  school: string
+  subjects: string,
+  rooms: string,
+}
+
+const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (userProps: UserProps) => void}) => {
+  const userQuery = api.user.getUserInfo.useQuery();
+
   const { data: session } = useSession();
   const subjects = [
     "Pre-Bio",
@@ -44,11 +54,29 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
     "Forensics",
   ];
 
-  const [selectedSchool, setSelectedSchool] = useState<string>('MVHS');
-  const [name, setName] = useState<string>(session?.user.name ?? '');
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
+  let defaultRooms = userQuery.data?.rooms
+  let defaultSubjects = userQuery.data?.subjects
+  let defaultSchool = userQuery.data?.school
 
+  // console.log("default Rooms: ", defaultRooms)
+
+  const [selectedSchool, setSelectedSchool] = useState<string>(defaultSchool ? defaultSchool : 'MVHS');
+  const [name, setName] = useState<string>(session?.user.name ?? '');
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>(defaultSubjects ? JSON.parse(defaultSubjects): []);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>(defaultRooms ? JSON.parse(defaultRooms): []);
+
+
+  useEffect(() => {
+    defaultRooms = userQuery.data?.rooms
+    defaultSubjects = userQuery.data?.subjects
+    defaultSchool = userQuery.data?.school
+
+    setSelectedSchool(defaultSchool ? defaultSchool : 'MVHS')
+    setSelectedSubjects(defaultSubjects ? JSON.parse(defaultSubjects) : [])
+    setSelectedRooms(defaultRooms ? JSON.parse(defaultRooms): [])
+
+  }, [defaultRooms, defaultSubjects, defaultSchool]);
+  
   // const handleSchoolChange = ((event: SelectChangeEvent)) => {setSelectedSchool(event.target.value as string);};
 
   const handleSchoolChange = (event: SelectChangeEvent) => {
@@ -81,7 +109,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
   };
 
   const handleSubmit = () => {
-    onSubmit({ name: name, school: selectedSchool, subjects: selectedSubjects, rooms: selectedRooms });
+    onSubmit({ name: name, school: selectedSchool, subjects: JSON.stringify(selectedSubjects), rooms: JSON.stringify(selectedRooms) });
     onClose();
   };
 
@@ -113,6 +141,7 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
           <Select
             labelId="school-label"
             id="school-select"
+            defaultValue={defaultSchool ? defaultSchool: "MVHS"}
             value={selectedSchool}
             label="School"
             onChange={handleSchoolChange}
@@ -143,10 +172,11 @@ const SettingsBox = ({ onClose, onSubmit }: { onClose: () => void, onSubmit: (us
             id="tags-filled"
             options={[]}
             freeSolo
+            value={selectedRooms}
             onChange={handleRoomChange}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
-                // DEBUG: not sure if this is gonna work now -- I was just trying to get rid of eslint error
+                
                 <Chip variant="outlined" label={option} {...getTagProps({ index })} key={index} />
               ))
             }

@@ -23,45 +23,52 @@ const UserProps = z.object({
 
 export const userRouter = createTRPCRouter({
   upsertUserAccount: protectedProcedure
-    .input(UserProps)
+    .input(z.object({
+      name: z.string(),
+      school: z.string().optional(),
+      subjects: z.string(),
+      rooms: z.string()
+    }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
       const userAccount = await ctx.db.$transaction(async (prisma) => {
-        // Upsert user account
+        // upsert should create / update
         const upsertedUserAccount = await prisma.userAccount.upsert({
           where: { userId: userId },
           create: {
             userId,
             name: input.name,
             school: input.school,
-            subjects: {
-              create: input.subjects.map((subject) => ({ name: subject })),
-            },
-            rooms: {
-              create: input.rooms.map((room) => ({ number: room })),
-            },
+            subjects: input.subjects,
+            rooms: input.rooms
+            // subjects: {
+            //   create: input.subjects.map((subject) => ({ name: subject })),
+            // },
+            // rooms: {
+            //   create: input.rooms.map((room) => ({ number: room })),
+            // },
           },
           update: {
             name: input.name,
             school: input.school,
-            subjects: {
-              // First, delete existing subjects
-              deleteMany: { userAccountId: userId },
-              // Then, create new ones
-              create: input.subjects.map((subject) => ({ name: subject })),
-            },
-            rooms: {
-              // First, delete existing rooms
-              deleteMany: { userAccountId: userId },
-              // Then, create new ones
-              create: input.rooms.map((room) => ({ number: room })),
-            },
+            subjects: input.subjects,
+            rooms: input.rooms
+            // subjects: {
+            //   // if update, delete then create new
+            //   deleteMany: { userAccountId: userId },
+            //   create: input.subjects.map((subject) => ({ name: subject })),
+            // },
+            // rooms: {
+            //   // same as subjects
+            //   deleteMany: { userAccountId: userId },
+            //   create: input.rooms.map((room) => ({ number: room })),
+            // },
           },
-          include: {
-            subjects: true,
-            rooms: true,
-          },
+          // include: {
+          //   subjects: true,
+          //   rooms: true,
+          // },
         });
 
         return upsertedUserAccount;
@@ -69,78 +76,25 @@ export const userRouter = createTRPCRouter({
 
       return userAccount;
     }),
-  createUserAccount: protectedProcedure
-    .input(UserProps)
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-      const userAccount = await ctx.db.userAccount.create({
-        data: {
-          userId,
-          name: input.name,
-          school: input.school,
-          subjects: {
-            create: input.subjects.map((subject) => ({ name: subject })),
-          },
-          rooms: {
-            create: input.rooms.map((room) => ({ number: room })),
-          },
-        },
-        include: {
-          subjects: true,
-          rooms: true,
-        },
-      });
-
-      return userAccount;
-    }),
-
-  updateUserAccount: protectedProcedure
-    .input(UserProps)
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-
-      await ctx.db.$transaction(async (prisma) => {
-        // Delete existing subjects and rooms for this user account
-        await prisma.subject.deleteMany({
-          where: { userAccountId: userId },
-        });
-        await prisma.room.deleteMany({
-          where: { userAccountId: userId },
-        });
-
-        // Logic to create/update subjects and rooms needs to be implemented here
-      });
-
-      const updatedUserAccount = await ctx.db.userAccount.update({
-        where: { userId: userId },
-        data: {
-          name: input.name,
-          school: input.school,
-          subjects: {
-            create: input.subjects.map((subject) => ({ name: subject })),
-          },
-          rooms: {
-            create: input.rooms.map((room) => ({ number: room })),
-          },
-        },
-        include: {
-          subjects: true,
-          rooms: true,
-        },
-      });
-
-      return updatedUserAccount;
-    }),
-
+  getUserInfo: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.userAccount.findUnique({
+      where: { userId: ctx.session.user.id },
+      // include: {
+      //   subjects: true,
+      //   rooms: true,
+      // },
+    })
+    return user;
+  }),
   getUserByEmail: protectedProcedure
     .input(z.object({ email: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.userAccount.findUnique({
         where: { email: input.email },
-        include: {
-          subjects: true,
-          rooms: true,
-        },
+        // include: {
+        //   subjects: true,
+        //   rooms: true,
+        // },
       });
 
       if (!user) {
@@ -150,13 +104,6 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  //   hello: publicProcedure
-  //     .input(z.object({ text: z.string() }))
-  //     .query(({ input }) => {
-  //       return {
-  //         greeting: `Hello ${input.text}`,
-  //       };
-  //     }),
 
   //   getAll: publicProcedure.query(({ ctx }) => {
   //     return ctx.db.example.findMany();
@@ -166,3 +113,66 @@ export const userRouter = createTRPCRouter({
   //   return "Please enter further profile details to continue";
   // }),
 });
+
+
+  // createUserAccount: protectedProcedure
+  //   .input(
+  //     UserProps)
+  //   .mutation(async ({ ctx, input }) => {
+  //     const userId = ctx.session.user.id;
+  //     const userAccount = await ctx.db.userAccount.create({
+  //       data: {
+  //         userId,
+  //         name: input.name,
+  //         school: input.school,
+  //         subjects: {
+  //           create: input.subjects.map((subject) => ({ name: subject })),
+  //         },
+  //         rooms: {
+  //           create: input.rooms.map((room) => ({ number: room })),
+  //         },
+  //       },
+  //       include: {
+  //         subjects: true,
+  //         rooms: true,
+  //       },
+  //     });
+
+  //     return userAccount;
+  //   }),
+
+  // updateUserAccount: protectedProcedure
+  //   .input(UserProps)
+  //   .mutation(async ({ ctx, input }) => {
+  //     const userId = ctx.session.user.id;
+
+  //     await ctx.db.$transaction(async (prisma) => {
+  //       await prisma.subject.deleteMany({
+  //         where: { userAccountId: userId },
+  //       });
+  //       await prisma.room.deleteMany({
+  //         where: { userAccountId: userId },
+  //       });
+
+  //     });
+
+  //     const updatedUserAccount = await ctx.db.userAccount.update({
+  //       where: { userId: userId },
+  //       data: {
+  //         name: input.name,
+  //         school: input.school,
+  //         subjects: {
+  //           create: input.subjects.map((subject) => ({ name: subject })),
+  //         },
+  //         rooms: {
+  //           create: input.rooms.map((room) => ({ number: room })),
+  //         },
+  //       },
+  //       include: {
+  //         subjects: true,
+  //         rooms: true,
+  //       },
+  //     });
+
+  //     return updatedUserAccount;
+  //   }),
