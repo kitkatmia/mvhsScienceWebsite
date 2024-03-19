@@ -18,7 +18,7 @@ interface Question {
 const questions: Question[] = [
   { question: "Why can't I access the general info link?", answer: "You need to be signed into your MVLA account!" },
   { question: "Where do I need to look for more information about setting up labs?", answer: "Check out the general info website to get answers about that and a lot more!" },
-  {question: "Uh oh... I got an error! What do I do?", answer: "Email us at {info to be filled in}"}
+  {question: "Uh oh... I got an error! What do I do?", answer: "Email us at maxf6.283@gmail.com or alinka.markova@gmail.com"}
 ];
 
 
