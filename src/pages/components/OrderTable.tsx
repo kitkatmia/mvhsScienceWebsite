@@ -27,7 +27,7 @@ export default function OrderTable(props: {
     props.orders = [];
   }
   return (
-    <table className="w-full table-auto border-collapse">
+    <table className="w-3/4 table-auto border-collapse m-auto">
       <thead>
         <tr>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
@@ -87,7 +87,7 @@ function CommentBox(data: { comments: (Comment & { user: User })[] | undefined }
       </Button>
       <ClickAwayListener onClickAway={() => setOpened(false)}>
         {opened ? (
-          <div className="absolute z-10 rounded-lg border-[2px] border-solid border-blue-500 bg-slate-900">
+          <div className="absolute z-10 rounded-lg border-[2px] border-solid border-blue-500 bg-slate-50">
             {data.comments.map((e) => (
               <div key={e.id}>
                 {e.user.image && (
