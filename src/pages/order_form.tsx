@@ -1,14 +1,15 @@
 import React from 'react'
 import { useLocation } from "react-router-dom";
+import { useOrderContext } from './contexts/OrderContext';
 
 const OrderForm = () => {
-  const location = useLocation();
-  const { jsonQuestions } = location.state || {}; // Default to an empty object if state is undefined
+  const { sharedState } = useOrderContext();
+  console.log(sharedState)
   
   return (
     <>
       <div>OrderForm</div>
-      <div>{jsonQuestions}</div>
+      <div>{}</div> 
     </>
   )
 }

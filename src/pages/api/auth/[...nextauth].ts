@@ -19,8 +19,8 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
 
-        // Get the user's role from the database and add it to the session
-        // This is used to determine if the user is an admin or not
+        // get user's role from the database and add it to the session
+        // used to determine if the user is an admin or not
         const userRole = await db.user.findUnique({
           where: { id: user.id },
           select: { role: true },

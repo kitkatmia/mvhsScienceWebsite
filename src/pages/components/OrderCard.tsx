@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
 import orderFormQuestions from '../../data/orderFormQuestions.json';
+import { useOrderContext } from '../contexts/OrderContext';
 
 const OrderCard = (props: {
     imageName: string;
@@ -19,6 +20,16 @@ const OrderCard = (props: {
   if (props.title in orderFormQuestions) {
     questionData = JSON.stringify(orderFormQuestions[props.title as keyof Object]);
   }
+
+  const { setSharedState } = useOrderContext();
+
+  const updateSharedState = () => {
+    setSharedState(currentState => ({
+      ...currentState,
+      // Update the state as needed
+      newKey: 'newValue',
+    }));
+  };
   return (
     <Card sx={{ maxWidth: 345}}>
       <CardMedia
@@ -54,7 +65,8 @@ const OrderCard = (props: {
             component="a"
             size="small"
             variant="outlined"
-          >Home</Button>
+            onClick={updateSharedState}
+          >Order</Button>
         </Link>
         
       </CardActions>
