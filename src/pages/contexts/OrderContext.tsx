@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, ReactNode, Dispatch, SetSta
 // TO-DO: need to alter context in ordercard and recivie it in form
 
 interface OrderContextType {
-  sharedState: { [key: string]: any } | null;
-  setSharedState: Dispatch<SetStateAction<{ [key: string]: any } | null>>;
+  sharedState: string  | null;
+  setSharedState: Dispatch<SetStateAction< string  | null>>;
 }
 
 const OrderContext = createContext<OrderContextType | null>(null);
@@ -14,7 +14,7 @@ interface OrderProviderProps {
 }
 
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
-  const [sharedState, setSharedState] = useState<{ [key: string]: any } | null>(null);
+  const [sharedState, setSharedState] = useState< string  | null>(null);
 
   return (
     <OrderContext.Provider value={{ sharedState, setSharedState }}>
