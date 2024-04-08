@@ -5,9 +5,9 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Link } from "react-router-dom";
 import orderFormQuestions from '../../data/orderFormQuestions.json';
 import { useOrderContext } from '../contexts/OrderContext';
+import Link from 'next/link';
 
 const OrderCard = (props: {
     imageName: string;
@@ -52,19 +52,18 @@ const OrderCard = (props: {
             <Button size="small" variant='outlined'>Extra Info</Button>
           </a>
           : <div></div>}
-          {/* debug: link won't wokr bc we're using nextjs. need to switch to context */}
-        <Link
-          to={'/order_form'}
-          state= {{questionData}}
-          >
+        {/* debug: link won't wokr bc we're using nextjs. need to switch to context */}
+        <Link href="/order_form" passHref legacyBehavior>
           <Button
             component="a"
             size="small"
             variant="outlined"
             onClick={updateSharedState}
-          >Order</Button>
+          >
+            Order
+          </Button>
         </Link>
-        
+  
       </CardActions>
     </Card>
   );
