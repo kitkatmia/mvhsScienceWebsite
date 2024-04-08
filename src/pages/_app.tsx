@@ -13,6 +13,7 @@ import {experimental_extendTheme as materialExtendTheme, Experimental_CssVarsPro
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // import { StyledEngineProvider } from '@mui/material/styles';
+import { OrderProvider } from './contexts/OrderContext';
 
 
 const materialTheme = materialExtendTheme();
@@ -23,6 +24,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <OrderProvider>
       {/* <StyledEngineProvider injectFirst> */}
         <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode='light'>
               <JoyCssVarsProvider defaultMode='light'>
@@ -30,7 +32,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 <Component {...pageProps} />
               </JoyCssVarsProvider>
         </MaterialCssVarsProvider>
-      {/* </StyledEngineProvider> */}
+        {/* </StyledEngineProvider> */}
+      </OrderProvider>
     </SessionProvider>
   );
 };

@@ -5,6 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Link } from "react-router-dom";
+import orderFormQuestions from '../../data/orderFormQuestions.json';
 
 const OrderCard = (props: {
     imageName: string;
@@ -13,6 +15,10 @@ const OrderCard = (props: {
     extraInfoLink?: string;
 }) => {
   const imageUrl = `/images/${props.imageName}`;
+  let questionData: string = '{}';
+  if (props.title in orderFormQuestions) {
+    questionData = JSON.stringify(orderFormQuestions[props.title as keyof Object]);
+  }
   return (
     <Card sx={{ maxWidth: 345}}>
       <CardMedia
@@ -39,7 +45,18 @@ const OrderCard = (props: {
             <Button size="small" variant='outlined'>Extra Info</Button>
           </a>
           : <div></div>}
-        <Button size="small" variant="outlined">Order</Button>
+          {/* debug: link won't wokr bc we're using nextjs. need to switch to context */}
+        <Link
+          to={'/order_form'}
+          state= {{questionData}}
+          >
+          <Button
+            component="a"
+            size="small"
+            variant="outlined"
+          >Home</Button>
+        </Link>
+        
       </CardActions>
     </Card>
   );

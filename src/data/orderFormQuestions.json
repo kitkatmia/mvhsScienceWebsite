@@ -1,0 +1,31 @@
+{
+    "Lab SetUp Request": {
+        "Q1": {
+            "question": "Date Needed",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "First class period you'll need the setup",
+            "answerType": "multi-autofill"
+        },
+        "Q3": {
+            "question": "Prep Type",
+            "answerType": "multi-select",
+            "options": [
+                "Prep supplies (reagents / equipment)",
+                "Prep supplies and set up Lab Stations",
+                "Just set up lab stations (I have supplies)"
+            ]
+        }
+    },
+    "Supplies Order Request": {
+        "Q1": {
+            "question": "Supplies?",
+            "answerType": "multi-select",
+            "options": [
+                "Crayons",
+                "Pencils"
+            ]
+        }
+    }
+}
