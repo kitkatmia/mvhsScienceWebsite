@@ -6,7 +6,7 @@
         },
         "Q2": {
             "question": "First class period you'll need the setup",
-            "answerType": "multi-autofill"
+            "answerType": "multi-period-autofill"
         },
         "Q3": {
             "question": "Prep Type",

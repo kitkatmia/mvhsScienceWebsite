@@ -8,7 +8,11 @@
         "answer": "Check out the general info website to get answers about that and a lot more!"
     },
     "Q3": {
+        "question": "It keeps saying that my order form 'timed out'. What does that mean?",
+        "answer": "The order information is stored locally, so if the chrome tab reloads, it'll lose all of your order information (including what order form you were filling out). If this happens to you, navigage back to the 'Order' tab and restart the order. To avoid this in the future, try to fill out the form all at once."
+    },
+    "Q4": {
         "question": "Uh oh... I got an error! What do I do?",
-        "answer": "Email us at maxf6.283@gmail.com or alinka.markova@gmail.com"
+        "answer": "Email us at maxf6.283@gmail.com or alinka.markova@gmail.com with a screenshot of the error and a description of the events leading up to the error (e.g. what you clicked). We'll try to resolve the issue as quickly as possible!"
     }
 }

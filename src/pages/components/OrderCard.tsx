@@ -24,7 +24,7 @@ const OrderCard = (props: {
   const { setSharedState } = useOrderContext();
 
   const updateSharedState = () => {
-    setSharedState(questionData);
+    setSharedState([props.title, questionData]);
   };
   return (
     <Card sx={{ maxWidth: 345}}>
