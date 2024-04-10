@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { useOrderContext } from './contexts/OrderContext';
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField } from '@mui/material';
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Button } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import { format } from 'date-fns';
 
 import { DayPicker } from 'react-day-picker';
@@ -50,6 +51,16 @@ const OrderForm = () => {
 
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [textFieldValue, setTextFieldValue] = useState('');
+
+  // test
+  const [textFieldResponses, setTextFieldResponses] = useState({"":""});
+  const handleTextFieldResponsesChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setTextFieldResponses((prevResponses) => ({
+      ...prevResponses,
+      [questionId]: event.target.value,
+    }));
+  };
+
 
   let dateFooter = <p>Please pick a day.</p>;
   if (selectedDate) {
@@ -136,16 +147,32 @@ const OrderForm = () => {
                       id="outlined-basic"
                       label="Ex: 2 hours, maybe 3"
                       variant="outlined"
-                      value={textFieldValue}
-                      onChange={(event) => setTextFieldValue(event.target.value)}
+                      // brlow doesn't work bc of type issues
+                      // value={(item.question in textFieldResponses) ? textFieldResponses[item.question] : ''}
+                      // work-around
+                      value={(item.question as keyof typeof textFieldResponses) in textFieldResponses ? textFieldResponses[item.question as keyof typeof textFieldResponses] : ''}
+                      onChange={(event) => handleTextFieldResponsesChange(item.question, event)}
                     />
                   </div>
+                  // <div key={item.question} className="flex flex-col">
+                  //   <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
+                  //   <TextField
+                  //     id="outlined-basic"
+                  //     label="Ex: 2 hours, maybe 3"
+                  //     variant="outlined"
+                  //     value={textFieldValue}
+                  //     onChange={(event) => setTextFieldValue(event.target.value)}
+                  //   />
+                  // </div>
                 );
               default:
                 return null;
                 
             }
             })}
+            <Button variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4">
+              Submit
+            </Button>
           </div>
       )}
       </div>

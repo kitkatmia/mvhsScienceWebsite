@@ -20,6 +20,18 @@
         "Q4": {
             "question": "How long do you estimate the lab setup will take?",
             "answerType": "text-field"
+        },
+        "Q5": {
+            "question": "Test",
+            "answerType": "multi-select",
+            "options": [
+                "op1",
+                "op2"
+            ]
+        },
+        "Q6": {
+            "question": "test pt2",
+            "answerType": "text-field"
         }
     },
     "Supplies Order Request": {
