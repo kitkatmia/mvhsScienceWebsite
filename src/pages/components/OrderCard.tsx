@@ -52,7 +52,6 @@ const OrderCard = (props: {
             <Button size="small" variant='outlined'>Extra Info</Button>
           </a>
           : <div></div>}
-        {/* debug: link won't wokr bc we're using nextjs. need to switch to context */}
         <Link href="/order_form" passHref legacyBehavior>
           <Button
             component="a"

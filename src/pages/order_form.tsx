@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { useOrderContext } from './contexts/OrderContext';
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField } from '@mui/material';
 import { format } from 'date-fns';
 
 import { DayPicker } from 'react-day-picker';
@@ -19,7 +19,7 @@ enum answerTypes {
   multiSelect = "multi-select",
   date = "date",
   multiPeriodAutofill = "multi-period-autofill",
-
+  textField = "text-field"
 }
 
 const OrderForm = () => {
@@ -49,13 +49,13 @@ const OrderForm = () => {
   ];
 
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [textFieldValue, setTextFieldValue] = useState('');
 
   let dateFooter = <p>Please pick a day.</p>;
   if (selectedDate) {
     dateFooter = <p>You picked {format(selectedDate, 'PP')}.</p>;
   }
   // TODO - json.parse; custom components bsed on Q info
-  
   return (
     <>
       <NavBar />
@@ -128,15 +128,28 @@ const OrderForm = () => {
                     </div>
                   )
                 }
-              }
-
+              case answerTypes.textField:
+                return (
+                  <div key={item.question} className="flex flex-col">
+                    <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
+                    <TextField
+                      id="outlined-basic"
+                      label="Ex: 2 hours, maybe 3"
+                      variant="outlined"
+                      value={textFieldValue}
+                      onChange={(event) => setTextFieldValue(event.target.value)}
+                    />
+                  </div>
+                );
+              default:
+                return null;
+                
+            }
             })}
           </div>
       )}
-            
       </div>
       <Footer/>
-
       {/* {Object.keys(JSON.parse(sharedState))} */}
     </>
   )

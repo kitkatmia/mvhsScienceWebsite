@@ -16,6 +16,10 @@
                 "Prep supplies and set up Lab Stations",
                 "Just set up lab stations (I have supplies)"
             ]
+        },
+        "Q4": {
+            "question": "How long do you estimate the lab setup will take?",
+            "answerType": "text-field"
         }
     },
     "Supplies Order Request": {
