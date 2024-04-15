@@ -37,12 +37,6 @@ const OrderForm = () => {
     setPeriod(event.target.value);
   };
 
-  const [multiSelect, setMultiSelect] = useState('');
-  const handleMultiSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMultiSelect(event.target.value);
-  };
-
-
   // this should be part of autofill
   const periodArr = [
     { value: '1', label: '1' },
@@ -50,10 +44,16 @@ const OrderForm = () => {
   ];
 
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [textFieldValue, setTextFieldValue] = useState('');
 
-  // test
-  const [textFieldResponses, setTextFieldResponses] = useState({"":""});
+  const [multiSelectResponses, setMultiSelectResponses] = useState({"": ""});
+  const handleMultiSelectResponsesChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setMultiSelectResponses((prevResponses) => ({
+      ...prevResponses,
+      [questionId]: event.target.value,
+    }));
+  };
+
+  const [textFieldResponses, setTextFieldResponses] = useState({ "": "" });
   const handleTextFieldResponsesChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTextFieldResponses((prevResponses) => ({
       ...prevResponses,
@@ -123,8 +123,8 @@ const OrderForm = () => {
                         <RadioGroup
                           aria-labelledby="demo-controlled-radio-buttons-group"
                           name="controlled-radio-buttons-group"
-                          value={multiSelect}
-                          onChange={handleMultiSelectChange}
+                          value={(item.question as keyof typeof multiSelectResponses) in multiSelectResponses ? multiSelectResponses[item.question as keyof typeof multiSelectResponses] : ''}
+                          onChange={(event) => handleMultiSelectResponsesChange(item.question, event)}
                         >
                           {item.options?.map((option) => (
                             <FormControlLabel 
