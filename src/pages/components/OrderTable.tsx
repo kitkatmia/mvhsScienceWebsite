@@ -37,7 +37,7 @@ export default function OrderTable(props: {
             Date
           </th>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
-            Description
+            Details
           </th>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
             Status
@@ -66,7 +66,9 @@ export default function OrderTable(props: {
                 {e.date.toDateString()}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
-                {e.description}
+                {
+                JSON.stringify(e.details)
+                }
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 {statusMap[e.status]}
