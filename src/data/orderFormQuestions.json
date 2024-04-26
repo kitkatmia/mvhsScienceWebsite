@@ -1,15 +1,15 @@
 {
     "Lab SetUp Request": {
         "Q1": {
-            "question": "Date Needed",
+            "question": "Date Needed:",
             "answerType": "date"
         },
         "Q2": {
-            "question": "First class period you'll need the setup",
+            "question": "First class period you'll need the setup:",
             "answerType": "multi-period-autofill"
         },
         "Q3": {
-            "question": "Prep Type",
+            "question": "Prep Type:",
             "answerType": "multi-select",
             "options": [
                 "Prep supplies (reagents / equipment)",
@@ -22,15 +22,33 @@
             "answerType": "text-field"
         },
         "Q5": {
-            "question": "Test",
-            "answerType": "multi-select",
-            "options": [
-                "op1",
-                "op2"
-            ]
+            "question": "Room number:",
+            "answerType": "auto-multi-select",
+            "type": "room"
         },
         "Q6": {
-            "question": "test pt2",
+            "question": "Class:",
+            "answerType": "auto-multi-select",
+            "type": "class"
+        },
+        "Q7": {
+            "question": "Number of lab setups (student lab stations) needed:",
+            "answerType": "text-field"
+        },
+        "Q8": {
+            "question": "Equipment Needed: (List - be specific)",
+            "answerType": "text-field"
+        },
+        "Q9": {
+            "question": "Reagents Needed: (List reagent names, amounts, concentrations)",
+            "answerType": "text-field"
+        },
+        "Q10": {
+            "question": "Best time to contact you for questions?",
+            "answerType": "text-field"
+        },
+        "Q11": {
+            "question": "Got a link to a procedure or recipe? Put them here! (If you need to send me a file, please email to julie.mcvay@mvla.net)",
             "answerType": "text-field"
         }
     },
