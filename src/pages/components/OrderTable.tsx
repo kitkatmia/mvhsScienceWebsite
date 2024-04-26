@@ -37,6 +37,9 @@ export default function OrderTable(props: {
             Date
           </th>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
+            Category
+          </th>
+          <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
             Details
           </th>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
@@ -64,6 +67,9 @@ export default function OrderTable(props: {
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 {e.date.toDateString()}
+              </td>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                {e.categories}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 {

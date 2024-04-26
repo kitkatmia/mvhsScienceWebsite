@@ -348,7 +348,7 @@ const OrderForm = () => {
               
               }
             })}
-            <Button variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4" onClick={handleSubmit}>
+            <Button component="a" href="/order_status" variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4" onClick={handleSubmit}>
               Submit
             </Button>
           </div>

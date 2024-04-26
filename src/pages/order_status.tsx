@@ -53,10 +53,16 @@ export default function OrderStatus() {
     <>
       <NavBar />
       <PageTitle title="Order Status" />
-      <TextField fullWidth className="m-4" label="Search" value={search} onChange={(e) => {
-        setSearch(e.target.value)
-        setFilters([generateSearchFilter(search)]);
-      }}/>
+      <div className="flex justify-center">
+        <TextField className="m-4 w-3/4" label="Search" value={search} onChange={(e) => {
+          setSearch(e.target.value)
+          setFilters([generateSearchFilter(search)]);
+        }}/>
+      </div>
+        {/* <TextField fullWidth className="m-4" label="Search" value={search} onChange={(e) => {
+          setSearch(e.target.value)
+          setFilters([generateSearchFilter(search)]);
+        }}/> */}
       {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} />}
       <Footer />
     </>
