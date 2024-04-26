@@ -28,7 +28,7 @@ export default function OrderStatus() {
     if(e.description.includes(search)) {
       return true;
     }
-    if(e.details && e.details?.toString().includes(search)) {
+    if(e.details?.toString() != "[Object object]" && e.details?.toString().includes(search)) {
       return true;
     }
     return false;
