@@ -1,8 +1,9 @@
-import React, {useState} from 'react'
+import React, {CSSProperties, useState} from 'react'
 import { useOrderContext } from './contexts/OrderContext';
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { format } from 'date-fns';
+import CircularProgress from '@mui/material/CircularProgress';
+import { format, min } from 'date-fns';
 
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
@@ -10,50 +11,78 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import PageTitle from './components/PageTitle';
 
+import { Status } from '@prisma/client'
+import { api } from '~/utils/api'
+import { useSession } from 'next-auth/react';
+
+const statusMap: Record<Status, string> = {
+  Complete: "Complete",
+  Not_Started: "Not Started",
+  In_Progress: "In Progress",
+};
+
 interface StateType {
   answerType: string,
   question: string,
   options: string[] | undefined
+  type: string | undefined
 }
 
 enum answerTypes {
   multiSelect = "multi-select",
   date = "date",
   multiPeriodAutofill = "multi-period-autofill",
-  textField = "text-field"
+  textField = "text-field",
+  autoMultiSelect = "auto-multi-select"
+}
+
+interface DictTypeResponse {
+  [key: string]: string;
 }
 
 const OrderForm = () => {
+  const mutation = api.order.createOrder.useMutation();
+  const userQuery = api.user.getUserInfo.useQuery();
+
+  const { data: session } = useSession();
   const { sharedState } = useOrderContext();
   var arr: StateType[] = [];
+  var questionTypeCount: { [key: string]: number } = {};
   var questions: string = sharedState[1] ? sharedState[1] : "{}";
-    Object.keys(JSON.parse(questions)).forEach(function(key) {
-      arr.push(JSON.parse(questions)[key]);
-    });
-  var title: string = sharedState[0] ? sharedState[0]+" Order Form" : "Order form";
+  Object.keys(JSON.parse(questions)).forEach(function (key) {
+    arr.push(JSON.parse(questions)[key]);
+    if (key in Object.keys(questionTypeCount)) {
+      if (questionTypeCount[key] != undefined) {
+        questionTypeCount[key] += 1;
+      }
+    } else {
+      questionTypeCount[key] = 1;
+    }
+  });
+  var title: string = sharedState[0] ? sharedState[0] + " Order Form" : "Order form";
 
   const [period, setPeriod] = useState('');
   const handlePeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPeriod(event.target.value);
   };
 
-  const [multiSelect, setMultiSelect] = useState('');
-  const handleMultiSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMultiSelect(event.target.value);
-  };
-
-
   // this should be part of autofill
-  const periodArr = [
-    { value: '1', label: '1' },
-    { value: '2', label: '2' },
-  ];
+  const periodArr: { value: string, label: string }[] = [];
+  for (let i = 1; i <= 7; i++) {
+      periodArr.push({ value: `${i}`, label: `${i}` });
+  }
 
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [textFieldValue, setTextFieldValue] = useState('');
 
-  // test
-  const [textFieldResponses, setTextFieldResponses] = useState({"":""});
+  const [multiSelectResponses, setMultiSelectResponses] = useState<DictTypeResponse>({ "": "" });
+  const handleMultiSelectResponsesChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setMultiSelectResponses((prevResponses) => ({
+      ...prevResponses,
+      [questionId]: event.target.value,
+    }));
+  };
+
+  const [textFieldResponses, setTextFieldResponses] = useState<DictTypeResponse>({ "": "" });
   const handleTextFieldResponsesChange = (questionId: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setTextFieldResponses((prevResponses) => ({
       ...prevResponses,
@@ -66,23 +95,136 @@ const OrderForm = () => {
   if (selectedDate) {
     dateFooter = <p>You picked {format(selectedDate, 'PP')}.</p>;
   }
-  // TODO - json.parse; custom components bsed on Q info
+      
+  const isComplete = () => {
+    let complete = true;
+    Object.keys(questionTypeCount).forEach(type => {
+      if (type === answerTypes.multiSelect && questionTypeCount[type] !== Object.keys(multiSelectResponses).length) {
+        complete = false;
+      } else if (type === answerTypes.date && !selectedDate) {
+        complete = false;
+      } else if (type === answerTypes.multiPeriodAutofill && period === '') {
+        complete = false;
+      } else if (type === answerTypes.textField && questionTypeCount[type] !== Object.keys(textFieldResponses).length) {
+        complete = false;
+      }
+    });
+    return complete;
+  }
+
+  const getUserDbOptions = (type: string | undefined) => {
+    if (typeof type === "undefined"){
+      console.log("uh oh... something is wrong...");
+      return;
+    }
+    if (type === "room" && typeof userQuery.data?.rooms === "string") {
+       return JSON.parse(userQuery.data.rooms);
+    } else if (type === "class" && typeof userQuery.data?.subjects === "string") {
+       return JSON.parse(userQuery.data.subjects);
+    }
+  }
+
+  const handleSubmit = () => {
+    if (isComplete()) {
+      // DEBUG: this is a hacky solution, but it prevents undefined errors if {"": ""} not present
+      if (Object.keys(multiSelectResponses).length > 1) {
+        delete multiSelectResponses[""]
+      } else if (Object.keys(textFieldResponses).length > 1) {
+        delete textFieldResponses[""]
+      }
+      const orderDetails = {
+        userId: session?.user?.id || "",
+        status: Status.Not_Started,
+        categories: title,
+        description: "n/a",
+        details: JSON.stringify({
+          multiSelectResponses,
+          textFieldResponses,
+          period,
+          date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null
+        })
+      };
+      mutation.mutate(orderDetails, {
+        onSuccess: (data) => {
+          console.log('Order created successfully!', data);
+        },
+        onError: (error) => {
+          console.error('Failed to create order', error);
+        }
+      });
+    } else {
+      console.log('incomplete form');
+    }
+  }
+
+  // copying google forms to make format look a little nicer
+  const regComponentDivStyle = {
+    backgroundColor: '#fff', 
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '20px',
+    marginBottom: '10px', 
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  };
+
+  const centeredComponentDivStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    backgroundColor: '#fff', 
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    padding: '20px',
+    marginBottom: '10px', 
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  };
+  
+  const overallDivStyle = {
+    display: 'grid',
+    gridTemplateColumns: '1fr', 
+    gap: '10px', 
+    maxWidth: 'max(90vw, 100vw - 30px)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  };
+  if (userQuery.isLoading) {
+    return (
+      <>
+        <NavBar />
+        <PageTitle title={title} />
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '75vh',
+          flexDirection: 'column',
+          rowGap: '2vh'
+        }}>
+          <CircularProgress />
+          {"Note: if this loading process takes more than a few minutes, something is wrong. Try restarting the form."}
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <NavBar />
       <PageTitle title={title} />
       <div className='flex justify-center py-4'>
-      {Object.keys(arr).length === 0 ? (
-        <div>Sorry, the form timed out. Please navigate back to order, and complete the form in one go to avoid this issue.</div>
-      ) : (
-        <div className="flex flex-col space-y-4">
-            {arr.map(item => {
+        {Object.keys(arr).length === 0 ? (
+          <div>Sorry, the form timed out. Please navigate back to order, and complete the form in one go to avoid this issue.</div>
+        ) : (
+          <div style={overallDivStyle}>
+            {arr.map((item, index) => {
               switch (item.answerType) {
                 case (answerTypes.multiPeriodAutofill): {
                   return (
-                    <div >
+                    <div key={index} style={regComponentDivStyle}>
                       <FormControl>
-                          <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
+                        <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
                         <RadioGroup
                           aria-labelledby="demo-controlled-radio-buttons-group"
                           name="controlled-radio-buttons-group"
@@ -90,11 +232,11 @@ const OrderForm = () => {
                           onChange={handlePeriodChange}
                         >
                           {periodArr.map((option) => (
-                            <FormControlLabel 
-                              key={option.value} 
-                              value={option.value} 
-                              control={<Radio />} 
-                              label={option.label} 
+                            <FormControlLabel
+                              key={option.value}
+                              value={option.value}
+                              control={<Radio />}
+                              label={option.label}
                             />
                           ))}
                         </RadioGroup>
@@ -104,34 +246,35 @@ const OrderForm = () => {
                 }
                 case (answerTypes.date): {
                   return (
-                  <>
-                    <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
-                    <DayPicker
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      footer={dateFooter}
-                    />
-                  </>
+                      // regularly don't need cssproperties, but flexdirection causes an error without it -> see https://github.com/cssinjs/jss/issues/1344
+                    <div key={index} style={centeredComponentDivStyle as CSSProperties}>
+                      <FormLabel id={`date-picker`}>{item.question}</FormLabel>
+                      <DayPicker
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        footer={dateFooter}
+                      />
+                    </div>
                   )
                 }
                 case (answerTypes.multiSelect): {
                   return (
-                    <div >
+                    <div key={index} style={regComponentDivStyle}>
                       <FormControl>
-                          <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
+                        <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
                         <RadioGroup
                           aria-labelledby="demo-controlled-radio-buttons-group"
                           name="controlled-radio-buttons-group"
-                          value={multiSelect}
-                          onChange={handleMultiSelectChange}
+                          value={(item.question as keyof typeof multiSelectResponses) in multiSelectResponses ? multiSelectResponses[item.question as keyof typeof multiSelectResponses] : ''}
+                          onChange={(event) => handleMultiSelectResponsesChange(item.question, event)}
                         >
                           {item.options?.map((option) => (
-                            <FormControlLabel 
-                              key={option} 
-                              value={option} 
-                              control={<Radio />} 
-                              label={option} 
+                            <FormControlLabel
+                              key={option}
+                              value={option}
+                              control={<Radio />}
+                              label={option}
                             />
                           ))}
                         </RadioGroup>
@@ -139,47 +282,72 @@ const OrderForm = () => {
                     </div>
                   )
                 }
-              case answerTypes.textField:
-                return (
-                  <div key={item.question} className="flex flex-col">
-                    <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
-                    <TextField
-                      id="outlined-basic"
-                      label="Ex: 2 hours, maybe 3"
-                      variant="outlined"
-                      // brlow doesn't work bc of type issues
-                      // value={(item.question in textFieldResponses) ? textFieldResponses[item.question] : ''}
-                      // work-around
-                      value={(item.question as keyof typeof textFieldResponses) in textFieldResponses ? textFieldResponses[item.question as keyof typeof textFieldResponses] : ''}
-                      onChange={(event) => handleTextFieldResponsesChange(item.question, event)}
-                    />
-                  </div>
-                  // <div key={item.question} className="flex flex-col">
-                  //   <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
-                  //   <TextField
-                  //     id="outlined-basic"
-                  //     label="Ex: 2 hours, maybe 3"
-                  //     variant="outlined"
-                  //     value={textFieldValue}
-                  //     onChange={(event) => setTextFieldValue(event.target.value)}
-                  //   />
-                  // </div>
-                );
-              default:
-                return null;
-                
-            }
+                case answerTypes.textField:
+                  return (
+                    <div key={index} className="flex flex-col" style={regComponentDivStyle}>
+                      <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
+                      <TextField
+                        id="outlined-basic"
+                        label="Ex: 2 hours, maybe 3"
+                        variant="outlined"
+                        // below doesn't work bc of type issues
+                        // value={(item.question in textFieldResponses) ? textFieldResponses[item.question] : ''}
+                        // this is a work-around
+                        value={(item.question as keyof typeof textFieldResponses) in textFieldResponses ? textFieldResponses[item.question as keyof typeof textFieldResponses] : ''}
+                        onChange={(event) => handleTextFieldResponsesChange(item.question, event)}
+                      />
+                    </div>
+                    // <div key={item.question} className="flex flex-col">
+                    //   <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
+                    //   <TextField
+                    //     id="outlined-basic"
+                    //     label="Ex: 2 hours, maybe 3"
+                    //     variant="outlined"
+                    //     value={textFieldValue}
+                    //     onChange={(event) => setTextFieldValue(event.target.value)}
+                    //   />
+                    // </div>
+                  );
+                case (answerTypes.autoMultiSelect): {
+                  const options = getUserDbOptions(item.type);
+                  return (
+                    <div key={index} style={regComponentDivStyle}>
+                      <FormControl>
+                        <FormLabel id="demo-controlled-radio-buttons-group">{item.question}</FormLabel>
+                        <RadioGroup
+                          aria-labelledby="demo-controlled-radio-buttons-group"
+                          name="controlled-radio-buttons-group"
+                          value={options.length === 1 ? options[0] : ((item.question as keyof typeof multiSelectResponses) in multiSelectResponses ? multiSelectResponses[item.question as keyof typeof multiSelectResponses] : '')}
+                          onChange={(event) => handleMultiSelectResponsesChange(item.question, event)}
+                        >
+                          {options?.map((option: string) => (
+                            <FormControlLabel
+                              key={option}
+                              value={option}
+                              control={<Radio />}
+                              label={option}
+                            />
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                    </div>
+                  )
+                }
+                default:
+                  return null;
+              
+              }
             })}
-            <Button variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4">
+            <Button variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4" onClick={handleSubmit}>
               Submit
             </Button>
           </div>
-      )}
+        )}
       </div>
-      <Footer/>
-      {/* {Object.keys(JSON.parse(sharedState))} */}
+      <Footer />
     </>
   )
 }
+
 
 export default OrderForm
