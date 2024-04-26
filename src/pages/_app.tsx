@@ -14,6 +14,7 @@ import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // import { StyledEngineProvider } from '@mui/material/styles';
 import { OrderProvider } from './contexts/OrderContext';
+import Head from "next/head";
 
 
 const materialTheme = materialExtendTheme();
@@ -28,7 +29,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
       {/* <StyledEngineProvider injectFirst> */}
         <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }} defaultMode='light'>
               <JoyCssVarsProvider defaultMode='light'>
-                <CssBaseline enableColorScheme />
+            <CssBaseline enableColorScheme />
+                <Head>
+                  <title>MVLA Science Support</title>
+                  <meta name="description" content="MVLA and LAHS Science Suport Website" />
+                  <link rel="icon" href="/mvla_favicon.jpeg" />
+                </Head>
                 <Component {...pageProps} />
               </JoyCssVarsProvider>
         </MaterialCssVarsProvider>
