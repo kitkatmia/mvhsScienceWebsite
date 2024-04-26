@@ -23,7 +23,7 @@ const generateSearchFilter = (searchTerm: string) => (e: OrderWithCommentsAndUse
       return true;
     }
     if(e.comments?.filter((comment) => (comment.contents.includes(searchTerm))) && e.comments?.filter((comment) => (comment.contents.includes(searchTerm))).length > 0) {
-      console.log(e.comments + " inncludes " + searchTerm);
+      console.log(e.comments, " inncludes ", searchTerm);
       return true;
     }
     if(e.description.includes(searchTerm)) {
