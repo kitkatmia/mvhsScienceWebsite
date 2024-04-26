@@ -142,7 +142,9 @@ const OrderForm = () => {
       // DEBUG: this is a hacky solution, but it prevents undefined errors if {"": ""} not present
       if (Object.keys(multiSelectResponses).length > 1) {
         delete multiSelectResponses[""]
-      } else if (Object.keys(textFieldResponses).length > 1) {
+      }
+      
+      if (Object.keys(textFieldResponses).length > 1) {
         delete textFieldResponses[""]
       }
       const orderDetails = {
@@ -151,10 +153,10 @@ const OrderForm = () => {
         categories: title,
         description: "n/a",
         details: JSON.stringify({
-          multiSelectResponses,
-          textFieldResponses,
-          period,
-          date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null
+          ...(Object.keys(textFieldResponses).length > 0 && {multiSelectResponses: multiSelectResponses}),
+          ...(Object.keys(textFieldResponses).length > 0 && {textFieldResponses: textFieldResponses}),
+          ...(period !== "" && {period: period}),
+          ...(selectedDate && { date: format(selectedDate, 'yyyy-MM-dd') })
         })
       };
       mutation.mutate(orderDetails, {
