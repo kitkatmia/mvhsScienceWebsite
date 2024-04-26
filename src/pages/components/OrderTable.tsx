@@ -3,11 +3,7 @@
 import type { Order, Comment, User, Status } from "@prisma/client";
 import { useState } from "react";
 import Image from "next/image";
-import {
-  Button,
-  ClickAwayListener,
-  TextareaAutosize,
-} from "@mui/material";
+import { Button, ClickAwayListener, TextareaAutosize } from "@mui/material";
 
 const statusMap: Record<Status, string> = {
   Complete: "Complete",
@@ -22,12 +18,16 @@ type OrderWithCommentsAndUser = Order & {
 
 export default function OrderTable(props: {
   orders: OrderWithCommentsAndUser[];
+  filters: ((e: OrderWithCommentsAndUser) => boolean)[];
 }) {
   if (props.orders == undefined) {
     props.orders = [];
   }
+  if (props.filters == undefined) {
+    props.filters = [(e) => true];
+  }
   return (
-    <table className="w-3/4 table-auto border-collapse m-auto">
+    <table className="m-auto w-3/4 table-auto border-collapse">
       <thead>
         <tr>
           <th className="border border-solid border-green-500 border-b-teal-500 text-lg">
@@ -48,31 +48,42 @@ export default function OrderTable(props: {
         </tr>
       </thead>
       <tbody>
-        {props.orders.map((e) => (
-          <tr key={e.id}>
-            <td className="border border-solid border-blue-500 p-2 text-lg">
-              {e.user?.name}
-            </td>
-            <td className="border border-solid border-blue-500 p-2 text-lg">
-              {e.date.toDateString()}
-            </td>
-            <td className="border border-solid border-blue-500 p-2 text-lg">
-              {e.description}
-            </td>
-            <td className="border border-solid border-blue-500 p-2 text-lg">
-              {statusMap[e.status]}
-            </td>
-            <td className="border border-solid border-blue-500 p-2 text-lg">
-              <CommentBox comments={e.comments} />
-            </td>
-          </tr>
-        ))}
+        {props.orders
+          .filter((order: OrderWithCommentsAndUser) => {
+            for (let i = 0; i < props.filters.length; i++) {
+              if (!props.filters[i]!(order)) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .map((e) => (
+            <tr key={e.id}>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                {e.user?.name}
+              </td>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                {e.date.toDateString()}
+              </td>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                {e.description}
+              </td>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                {statusMap[e.status]}
+              </td>
+              <td className="border border-solid border-blue-500 p-2 text-lg">
+                <CommentBox comments={e.comments} />
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );
 }
 
-function CommentBox(data: { comments: (Comment & { user: User })[] | undefined }) {
+function CommentBox(data: {
+  comments: (Comment & { user: User })[] | undefined;
+}) {
   const [opened, setOpened] = useState(false);
   if (data.comments == undefined) {
     data.comments = [];
@@ -105,12 +116,12 @@ function CommentBox(data: { comments: (Comment & { user: User })[] | undefined }
             ))}
             <div className="m-2 flex">
               <TextareaAutosize
-                className="m-2 resize-none flex-grow"
+                className="m-2 flex-grow resize-none"
                 placeholder="Enter a comment..."
               />
               <Button
                 type="submit"
-                className="border-[1px] border-solid border-blue-200 m-2"
+                className="m-2 border-[1px] border-solid border-blue-200"
               >
                 Post
               </Button>
