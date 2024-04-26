@@ -50,8 +50,8 @@ export default function OrderTable(props: {
       <tbody>
         {props.orders
           .filter((order: OrderWithCommentsAndUser) => {
-            for (let i = 0; i < props.filters.length; i++) {
-              if (!props.filters[i]!(order)) {
+            for (const f of props.filters) {
+              if (!f(order)) {
                 return false;
               }
             }
