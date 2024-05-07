@@ -8,6 +8,7 @@ import { Button } from "@mui/material";
 
 export default function Home() {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" }); // use useMutation to upload / change data in backend
+  const { data: session } = useSession();
 
   return (
     <>
@@ -17,12 +18,32 @@ export default function Home() {
         <link rel="icon" href="/mvla_favicon.jpeg" />
       </Head>
       <NavBar/>
-      <main className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#ffffff] to-[#96bcff]">
-        <div className="flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight text-black sm:text-[5rem]">
+      <main className="flex justify-center bg-gradient-to-b h-screen from-[#ffffff] to-[#96bcff] pb-40">
+        {/* DEBUG: lowkey looks bad centered vertically */}
+        <div className="flex flex-col items-center justify-center px-4 pb-8">
+          <h1 className="text-5xl font-extrabold tracking-tight text-black sm:text-[5rem] pb-8">
             MVLA Lab Support
           </h1>
           <div className="flex flex-col items-center">
+            <div className="pb-10">
+              {
+                session ? (
+                  <div className="flex justify-between gap-20">
+                    <Button variant="outlined" component="a" href="/order" className="px-10" style={{maxWidth: '800px', maxHeight: '100px', minWidth: '30vw', minHeight: '10vh', fontSize: "18px"}}>
+                      Order
+                    </Button>
+                    <Button variant="outlined" component="a" href="/order_status" style={{maxWidth: '800px', maxHeight: '100px', minWidth: '30vw', minHeight: '10vh', fontSize: "18px"}}>
+                      Order Status
+                    </Button>
+                  </div>
+                  )
+                      : (
+                          <div></div>
+                      )
+              }
+              {/* <Button >Order</Button>
+              <Button>Order Status</Button> */}
+            </div>
             {/* <p className="text-2xl text-black">
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
             </p> */}
