@@ -10,7 +10,7 @@ interface OrderContextType {
 // const OrderContext = createContext<OrderContextType>({"", null});
 const OrderContext = createContext<OrderContextType>({
   sharedState: [], 
-  setSharedState: () => {} 
+  setSharedState: () => {/* no-op */} 
 });
 
 interface OrderProviderProps {

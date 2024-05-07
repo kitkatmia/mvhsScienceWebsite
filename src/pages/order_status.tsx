@@ -83,7 +83,17 @@ export default function OrderStatus() {
     <>
       <NavBar />
       <PageTitle title="Order Status" />
-      <FormControl className="flex flex-row">
+      <div className="flex justify-center">
+        <TextField className="m-4 w-3/4" label="Search" value={search} onChange={(e) => {
+          setSearch(e.target.value)
+          setFilters([generateSearchFilter(search)]);
+        }}/>
+      </div>
+        {/* <TextField fullWidth className="m-4" label="Search" value={search} onChange={(e) => {
+          setSearch(e.target.value)
+          setFilters([generateSearchFilter(search)]);
+        }}/> */}
+         <FormControl className="flex flex-row">
         <TextField
           className="m-4"
           label="Search"
@@ -111,11 +121,7 @@ export default function OrderStatus() {
           <MenuItem value="user">Username</MenuItem>
         </Select>
       </FormControl>
-      {sessionData?.user.role == 1 ? (
-        "user view"
-      ) : (
-        <OrderTable orders={orders} filters={filters} sortFunction={sortFunction}/>
-      )}
+      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} />}
       <Footer />
     </>
   );

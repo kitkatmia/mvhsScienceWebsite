@@ -36,9 +36,8 @@ enum answerTypes {
   autoMultiSelect = "auto-multi-select"
 }
 
-interface DictTypeResponse {
-  [key: string]: string;
-}
+type DictTypeResponse = Record<string, string>;
+type Question = Record<string, StateType>;
 
 const OrderForm = () => {
   const mutation = api.order.createOrder.useMutation();
@@ -46,11 +45,17 @@ const OrderForm = () => {
 
   const { data: session } = useSession();
   const { sharedState } = useOrderContext();
-  var arr: StateType[] = [];
-  var questionTypeCount: { [key: string]: number } = {};
-  var questions: string = sharedState[1] ? sharedState[1] : "{}";
-  Object.keys(JSON.parse(questions)).forEach(function (key) {
-    arr.push(JSON.parse(questions)[key]);
+  const arr: StateType[] = [];
+  const questionTypeCount: Record<string, number> = {};
+  const questions: string = sharedState[1] ? sharedState[1] : "{}";
+  const parsedQuestions: Question = JSON.parse(questions) as Question;
+  Object.keys(parsedQuestions).forEach(function (key) {
+    const item = parsedQuestions[key];
+    if (item !== undefined) {
+      arr.push(item);
+    } else {
+      console.error("Unexpected undefined value at : ", key);
+    }
     if (key in Object.keys(questionTypeCount)) {
       if (questionTypeCount[key] != undefined) {
         questionTypeCount[key] += 1;
@@ -59,7 +64,7 @@ const OrderForm = () => {
       questionTypeCount[key] = 1;
     }
   });
-  var title: string = sharedState[0] ? sharedState[0] + " Order Form" : "Order form";
+  const title: string = sharedState[0] ? sharedState[0] + " Order Form" : "Order form";
 
   const [period, setPeriod] = useState('');
   const handlePeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +103,9 @@ const OrderForm = () => {
       
   const isComplete = () => {
     let complete = true;
-    Object.keys(questionTypeCount).forEach(type => {
+    Object.keys(questionTypeCount).forEach(key => {
+      // need below line or will get error: two values in this comparison do not have a shared enum type
+      const type = key as answerTypes;
       if (type === answerTypes.multiSelect && questionTypeCount[type] !== Object.keys(multiSelectResponses).length) {
         complete = false;
       } else if (type === answerTypes.date && !selectedDate) {
@@ -112,16 +119,22 @@ const OrderForm = () => {
     return complete;
   }
 
-  const getUserDbOptions = (type: string | undefined) => {
+  const getUserDbOptions = (type: string | undefined): string[] => {
     if (typeof type === "undefined"){
       console.log("uh oh... something is wrong...");
-      return;
+      return [""];
     }
-    if (type === "room" && typeof userQuery.data?.rooms === "string") {
-       return JSON.parse(userQuery.data.rooms);
-    } else if (type === "class" && typeof userQuery.data?.subjects === "string") {
-       return JSON.parse(userQuery.data.subjects);
+    try {
+      if (type === "room" && typeof userQuery.data?.rooms === "string") {
+        // need as string[] so it doesn't complain about unsafe return
+        return JSON.parse(userQuery.data.rooms) as string[];
+      } else if (type === "class" && typeof userQuery.data?.subjects === "string") {
+        return JSON.parse(userQuery.data.subjects) as string[];
+      }
+    } catch (error) {
+      console.error("Failed to parse JSON", error);
     }
+    return [""];
   }
 
   const handleSubmit = () => {
@@ -129,19 +142,21 @@ const OrderForm = () => {
       // DEBUG: this is a hacky solution, but it prevents undefined errors if {"": ""} not present
       if (Object.keys(multiSelectResponses).length > 1) {
         delete multiSelectResponses[""]
-      } else if (Object.keys(textFieldResponses).length > 1) {
+      }
+      
+      if (Object.keys(textFieldResponses).length > 1) {
         delete textFieldResponses[""]
       }
       const orderDetails = {
-        userId: session?.user?.id || "",
+        userId: session?.user?.id ?? "",
         status: Status.Not_Started,
         categories: title,
         description: "n/a",
         details: JSON.stringify({
-          multiSelectResponses,
-          textFieldResponses,
-          period,
-          date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null
+          ...(Object.keys(textFieldResponses).length > 0 && {multiSelectResponses: multiSelectResponses}),
+          ...(Object.keys(textFieldResponses).length > 0 && {textFieldResponses: textFieldResponses}),
+          ...(period !== "" && {period: period}),
+          ...(selectedDate && { date: format(selectedDate, 'yyyy-MM-dd') })
         })
       };
       mutation.mutate(orderDetails, {
@@ -266,7 +281,7 @@ const OrderForm = () => {
                         <RadioGroup
                           aria-labelledby="demo-controlled-radio-buttons-group"
                           name="controlled-radio-buttons-group"
-                          value={(item.question as keyof typeof multiSelectResponses) in multiSelectResponses ? multiSelectResponses[item.question as keyof typeof multiSelectResponses] : ''}
+                          value={item.question in multiSelectResponses ? multiSelectResponses[item.question] : ''}
                           onChange={(event) => handleMultiSelectResponsesChange(item.question, event)}
                         >
                           {item.options?.map((option) => (
@@ -290,10 +305,7 @@ const OrderForm = () => {
                         id="outlined-basic"
                         label="Ex: 2 hours, maybe 3"
                         variant="outlined"
-                        // below doesn't work bc of type issues
-                        // value={(item.question in textFieldResponses) ? textFieldResponses[item.question] : ''}
-                        // this is a work-around
-                        value={(item.question as keyof typeof textFieldResponses) in textFieldResponses ? textFieldResponses[item.question as keyof typeof textFieldResponses] : ''}
+                        value={(item.question) in textFieldResponses ? textFieldResponses[item.question] : ''}
                         onChange={(event) => handleTextFieldResponsesChange(item.question, event)}
                       />
                     </div>
@@ -317,7 +329,7 @@ const OrderForm = () => {
                         <RadioGroup
                           aria-labelledby="demo-controlled-radio-buttons-group"
                           name="controlled-radio-buttons-group"
-                          value={options.length === 1 ? options[0] : ((item.question as keyof typeof multiSelectResponses) in multiSelectResponses ? multiSelectResponses[item.question as keyof typeof multiSelectResponses] : '')}
+                          value={options.length === 1 ? options[0] : ((item.question) in multiSelectResponses ? multiSelectResponses[item.question] : '')}
                           onChange={(event) => handleMultiSelectResponsesChange(item.question, event)}
                         >
                           {options?.map((option: string) => (
@@ -338,7 +350,7 @@ const OrderForm = () => {
               
               }
             })}
-            <Button variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4" onClick={handleSubmit}>
+            <Button component="a" href="/order_status" variant="contained" color="success" endIcon={<SendIcon />} className="py-2 my-4" onClick={handleSubmit}>
               Submit
             </Button>
           </div>

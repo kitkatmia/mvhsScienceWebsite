@@ -16,9 +16,9 @@ const OrderCard = (props: {
     extraInfoLink?: string;
 }) => {
   const imageUrl = `/images/${props.imageName}`;
-  let questionData: string = '{}';
+  let questionData = '{}';
   if (props.title in orderFormQuestions) {
-    questionData = JSON.stringify(orderFormQuestions[props.title as keyof Object]);
+    questionData = JSON.stringify(orderFormQuestions[props.title as keyof object]);
   }
 
   const { setSharedState } = useOrderContext();
