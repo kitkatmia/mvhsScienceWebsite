@@ -19,6 +19,10 @@ type OrderWithCommentsAndUser = Order & {
 export default function OrderTable(props: {
   orders: OrderWithCommentsAndUser[];
   filters: ((e: OrderWithCommentsAndUser) => boolean)[];
+  sortFunction: (
+    a: OrderWithCommentsAndUser,
+    b: OrderWithCommentsAndUser,
+  ) => number;
 }) {
   if (props.orders == undefined) {
     props.orders = [];
@@ -60,6 +64,7 @@ export default function OrderTable(props: {
             }
             return true;
           })
+          .sort(props.sortFunction)
           .map((e) => (
             <tr key={e.id}>
               <td className="border border-solid border-blue-500 p-2 text-lg">
@@ -69,6 +74,7 @@ export default function OrderTable(props: {
                 {e.date.toDateString()}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
+
                 {e.categories}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
