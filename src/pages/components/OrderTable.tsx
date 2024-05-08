@@ -79,7 +79,22 @@ export default function OrderTable(props: {
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 {
-                JSON.stringify(e.details)
+                  // console.log(Object.keys(JSON.parse(e.details)))
+                  Object.keys(JSON.parse(e.details)).map((questionType) => {
+                    const json: JSON = JSON.parse(e.details);
+                    const subQuestionArr = json[questionType as keyof string];
+                    Object.keys(subQuestionArr).map((question) => {
+                      return (
+                        <div>
+                          <p key={question}>{question}</p>
+                          <p key={question}>{subQuestionArr[question]}</p>
+                        </div>
+                      )
+                    })
+                    // console.log(json[questionType], "    ", questionType, "    ", e.details)
+                    // return JSON.stringify(e.details)
+                  })
+                // fix
                 }
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
