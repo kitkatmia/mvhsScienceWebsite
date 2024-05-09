@@ -83,12 +83,6 @@ export default function OrderStatus() {
     <>
       <NavBar />
       <PageTitle title="Order Status" />
-      <div className="flex justify-center">
-        <TextField className="m-4 w-3/4" label="Search" value={search} onChange={(e) => {
-          setSearch(e.target.value)
-          setFilters([generateSearchFilter(search)]);
-        }}/>
-      </div>
         {/* <TextField fullWidth className="m-4" label="Search" value={search} onChange={(e) => {
           setSearch(e.target.value)
           setFilters([generateSearchFilter(search)]);
@@ -100,6 +94,7 @@ export default function OrderStatus() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
+            setFilters([generateSearchFilter(search)]);
           }}
         />
         <Button className="my-4" onClick={() => setFilters([generateSearchFilter(search)])}>
@@ -121,7 +116,7 @@ export default function OrderStatus() {
           <MenuItem value="user">Username</MenuItem>
         </Select>
       </FormControl>
-      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} />}
+      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} sortFunction={sortFunction} />}
       <Footer />
     </>
   );
