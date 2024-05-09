@@ -147,6 +147,7 @@ const OrderForm = () => {
       if (Object.keys(textFieldResponses).length > 1) {
         delete textFieldResponses[""]
       }
+      const period_with_colon = period + ":";
       const orderDetails = {
         userId: session?.user?.id ?? "",
         status: Status.Not_Started,
@@ -155,7 +156,7 @@ const OrderForm = () => {
         details: JSON.stringify({
           ...(Object.keys(textFieldResponses).length > 0 && {multiSelectResponses: multiSelectResponses}),
           ...(Object.keys(textFieldResponses).length > 0 && {textFieldResponses: textFieldResponses}),
-          ...(period !== "" && {period: period}),
+          ...(period_with_colon !== ":" && {period_with_colon: period_with_colon}),
           ...(selectedDate && { date: format(selectedDate, 'yyyy-MM-dd') })
         })
       };

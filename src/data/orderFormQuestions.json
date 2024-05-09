@@ -36,11 +36,11 @@
             "answerType": "text-field"
         },
         "Q8": {
-            "question": "Equipment Needed: (List - be specific)",
+            "question": "Equipment Needed (List - be specific):",
             "answerType": "text-field"
         },
         "Q9": {
-            "question": "Reagents Needed: (List reagent names, amounts, concentrations)",
+            "question": "Reagents Needed (List reagent names, amounts, concentrations):",
             "answerType": "text-field"
         },
         "Q10": {
@@ -48,7 +48,7 @@
             "answerType": "text-field"
         },
         "Q11": {
-            "question": "Got a link to a procedure or recipe? Put them here! (If you need to send me a file, please email to julie.mcvay@mvla.net)",
+            "question": "Got a link to a procedure or recipe? Put them here! (If you need to send me a file, please email to julie.mcvay@mvla.net):",
             "answerType": "text-field"
         }
     },

@@ -1,9 +1,17 @@
 "use client";
 
 import type { Order, Comment, User, Status } from "@prisma/client";
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button, ClickAwayListener, TextareaAutosize } from "@mui/material";
+
+interface DetailsJSON {
+  [key: string]: SubQuestions;
+}
+
+interface SubQuestions {
+  [key: string]: string;
+}
 
 const statusMap: Record<Status, string> = {
   Complete: "Complete",
@@ -81,21 +89,51 @@ export default function OrderTable(props: {
                 {
                   // console.log(Object.keys(JSON.parse(e.details)))
                   Object.keys(JSON.parse(e.details)).map((questionType) => {
-                    const json: JSON = JSON.parse(e.details);
-                    const subQuestionArr = json[questionType as keyof string];
-                    Object.keys(subQuestionArr).map((question) => {
+                    const detailsJSON: DetailsJSON = JSON.parse(e.details);
+                    let subQuestions: SubQuestions | undefined = {};
+
+                    if (detailsJSON[questionType] === undefined || detailsJSON[questionType] == null) {
+                      return;
+                    }
+                    
+                    if (questionType === "period" || questionType === "date") {
+                      console.log("questiontype: "+questionType)
                       return (
-                        <div>
-                          <p key={question}>{question}</p>
-                          <p key={question}>{subQuestionArr[question]}</p>
+                        <div key={questionType} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                          <p style={{ margin: 0 }}><strong>{questionType}</strong> {Object.values(detailsJSON[questionType])}</p>
                         </div>
-                      )
+                      );
+                      // subQuestions = {[questionType]: detailsJSON[questionType]} as SubQuestions; 
+                    } else {
+                      subQuestions = detailsJSON[questionType];
+                    }
+                    console.log(Object.keys(detailsJSON))
+                    // return <></>
+                    // const subQuestionArr: SubQuestions[] = detailsJSON[questionType];
+                    const subQuestionElements = Object.keys(subQuestions).map((questionKey) => {
+                      const answer = subQuestions[questionKey];
+                      return (
+                        <div key={questionKey} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                          <p style={{ margin: 0 }}><strong>{questionKey}</strong> {answer}</p>
+                        </div>
+                      );
+
                     })
-                    // console.log(json[questionType], "    ", questionType, "    ", e.details)
-                    // return JSON.stringify(e.details)
+                   return <React.Fragment key={questionType}>{subQuestionElements}</React.Fragment>;
                   })
                 // fix
                 }
+       {/* Object.keys(subQuestionArr).map((question) => { */}
+                    {/* //   return (
+                    //     <div>
+                    //       <p key={question}>{question}</p>
+                    //       <p key={question}>{subQuestionArr[question]}</p>
+                    //     </div>
+                    //   )
+                    // }
+                    // )
+                    // console.log(json[questionType], "    ", questionType, "    ", e.details)
+                  // return JSON.stringify(e.details) */}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 {statusMap[e.status]}
