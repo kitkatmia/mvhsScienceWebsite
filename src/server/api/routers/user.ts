@@ -6,14 +6,6 @@ import {
   // publicProcedure,
 } from "~/server/api/trpc";
 
-// const Subject = z.object({
-//   name: z.string(),
-// });
-
-// const Room = z.object({
-//   number: z.string(),
-// });
-
 const UserProps = z.object({
   name: z.string().optional(),
   school: z.string().optional(),
@@ -42,12 +34,6 @@ export const userRouter = createTRPCRouter({
             school: input.school,
             subjects: input.subjects,
             rooms: input.rooms
-            // subjects: {
-            //   create: input.subjects.map((subject) => ({ name: subject })),
-            // },
-            // rooms: {
-            //   create: input.rooms.map((room) => ({ number: room })),
-            // },
           },
           update: {
             name: input.name,
@@ -102,9 +88,7 @@ export const userRouter = createTRPCRouter({
       }
 
       return user;
-    }),
-
-
+    })
   //   getAll: publicProcedure.query(({ ctx }) => {
   //     return ctx.db.example.findMany();
   //   }),
@@ -113,66 +97,3 @@ export const userRouter = createTRPCRouter({
   //   return "Please enter further profile details to continue";
   // }),
 });
-
-
-  // createUserAccount: protectedProcedure
-  //   .input(
-  //     UserProps)
-  //   .mutation(async ({ ctx, input }) => {
-  //     const userId = ctx.session.user.id;
-  //     const userAccount = await ctx.db.userAccount.create({
-  //       data: {
-  //         userId,
-  //         name: input.name,
-  //         school: input.school,
-  //         subjects: {
-  //           create: input.subjects.map((subject) => ({ name: subject })),
-  //         },
-  //         rooms: {
-  //           create: input.rooms.map((room) => ({ number: room })),
-  //         },
-  //       },
-  //       include: {
-  //         subjects: true,
-  //         rooms: true,
-  //       },
-  //     });
-
-  //     return userAccount;
-  //   }),
-
-  // updateUserAccount: protectedProcedure
-  //   .input(UserProps)
-  //   .mutation(async ({ ctx, input }) => {
-  //     const userId = ctx.session.user.id;
-
-  //     await ctx.db.$transaction(async (prisma) => {
-  //       await prisma.subject.deleteMany({
-  //         where: { userAccountId: userId },
-  //       });
-  //       await prisma.room.deleteMany({
-  //         where: { userAccountId: userId },
-  //       });
-
-  //     });
-
-  //     const updatedUserAccount = await ctx.db.userAccount.update({
-  //       where: { userId: userId },
-  //       data: {
-  //         name: input.name,
-  //         school: input.school,
-  //         subjects: {
-  //           create: input.subjects.map((subject) => ({ name: subject })),
-  //         },
-  //         rooms: {
-  //           create: input.rooms.map((room) => ({ number: room })),
-  //         },
-  //       },
-  //       include: {
-  //         subjects: true,
-  //         rooms: true,
-  //       },
-  //     });
-
-  //     return updatedUserAccount;
-  //   }),

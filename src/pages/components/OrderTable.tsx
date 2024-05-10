@@ -4,6 +4,7 @@ import type { Order, Comment, User, Status } from "@prisma/client";
 import React, { useState } from "react";
 import Image from "next/image";
 import { Button, ClickAwayListener, TextareaAutosize } from "@mui/material";
+import { api } from "~/utils/api";
 
 interface DetailsJSON {
   [key: string]: SubQuestions;
@@ -134,7 +135,7 @@ export default function OrderTable(props: {
                 {statusMap[e.status]}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
-                <CommentBox comments={e.comments} />
+                <CommentBox comments={e.comments} orderId={e.id} />
               </td>
             </tr>
           ))}
@@ -143,12 +144,36 @@ export default function OrderTable(props: {
   );
 }
 
-function CommentBox(data: {
-  comments: (Comment & { user: User })[] | undefined;
-}) {
+interface OrderCommentInformation {
+  comment: string,
+  orderId: string
+}
+function CommentBox(
+  data: { comments: (Comment & { user: User })[] | undefined; orderId: string}
+) {
+  const mutation = api.order.addOrderComment.useMutation();
+
   const [opened, setOpened] = useState(false);
+  const [comment, setComment] = useState('');
+
   if (data.comments == undefined) {
     data.comments = [];
+  }
+
+  const handleCommentChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    setComment(event.target.value); 
+  };
+
+  const handleSubmit = () => {
+    const newComment = {comment: comment, orderId: data.orderId} as OrderCommentInformation
+    mutation.mutate(newComment, {
+      onSuccess: (newComment) => {
+        console.log('Comment created successfully!', newComment);
+      },
+      onError: (error) => {
+        console.error('Failed to create order', error);
+      }
+    });
   }
   return (
     <>
@@ -160,30 +185,34 @@ function CommentBox(data: {
       </Button>
       <ClickAwayListener onClickAway={() => setOpened(false)}>
         {opened ? (
-          <div className="absolute z-10 rounded-lg border-[2px] border-solid border-blue-500 bg-slate-50">
+          <div className="absolute z-10 rounded-lg border-[2px] border-solid border-blue-500 bg-slate-50 p-1">
             {data.comments.map((e) => (
-              <div key={e.id}>
+              <div key={e.id} className="flex items-center space-x-2 my-2">
                 {e.user.image && (
                   <Image
                     src={e.user.image}
                     alt="user image"
-                    width={50}
-                    height={50}
+                    width={30}
+                    height={30}
                     className="rounded-full"
                   />
                 )}
-                {e.user.name + ": "}{" "}
+                <span className="font-bold text-sm">{e.user.name}:</span>
+                {/* {e.user.name + ": "}{" "} */}
                 <span className="text-sm">{e.contents}</span>
               </div>
             ))}
-            <div className="m-2 flex">
+            <div className="flex items-center mt-4">
               <TextareaAutosize
                 className="m-2 flex-grow resize-none"
                 placeholder="Enter a comment..."
+                value={comment}
+                onChange={handleCommentChange}
               />
               <Button
                 type="submit"
                 className="m-2 border-[1px] border-solid border-blue-200"
+                onClick={handleSubmit}
               >
                 Post
               </Button>

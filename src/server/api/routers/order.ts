@@ -46,4 +46,29 @@ export const orderRouter = createTRPCRouter({
 
         return newOrder;
     }),
+    addOrderComment: protectedProcedure
+      .input(z.object({ comment: z.string(), orderId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const comment = await ctx.db.comment.create({
+              data: {
+                contents: input.comment,
+                user: { connect: { id: ctx.session.user.id } },
+                order: { connect: { id: input.orderId } }
+              }
+        });
+        return comment;
+        // const user = await ctx.db.userAccount.findUnique({
+        //   where: { userId: ctx.session.user.id },
+        //   // include: {
+        //   //   subjects: true,
+        //   //   rooms: true,
+        //   // },
+        // });
+
+        // if (!user) {
+        //   throw new Error("User not found");
+        // }
+
+        // return user;
+      }),
 })
