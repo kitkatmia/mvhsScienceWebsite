@@ -97,7 +97,6 @@ export default function OrderTable(props: {
                     }
                     
                     if (questionType === "period" || questionType === "date") {
-                      console.log("questiontype: "+questionType)
                       return (
                         <div key={questionType} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
                           <p style={{ margin: 0 }}><strong>{questionType}</strong> {Object.values(detailsJSON[questionType])}</p>
@@ -107,7 +106,6 @@ export default function OrderTable(props: {
                     } else {
                       subQuestions = detailsJSON[questionType];
                     }
-                    console.log(Object.keys(detailsJSON))
                     // return <></>
                     // const subQuestionArr: SubQuestions[] = detailsJSON[questionType];
                     const subQuestionElements = Object.keys(subQuestions).map((questionKey) => {

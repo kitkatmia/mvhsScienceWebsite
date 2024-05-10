@@ -28,7 +28,6 @@ const FAQ = () => {
               
                 {Object.entries(faqQuestions).map(([key, value]) => (
                   <>
-                    {console.log(key)}
                     <Grid item xs={12} md={6} key={key}>
                     <Accordion key={key}>
                     <AccordionSummary key={key} expandIcon={<ExpandMoreIcon />}>

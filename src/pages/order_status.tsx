@@ -27,7 +27,6 @@ const generateSearchFilter =
       return true;
     }
     searchTerm = searchTerm.toLowerCase();
-    console.log("matching");
     if (e.categories.toLowerCase().includes(searchTerm)) {
       return true;
     }
@@ -51,18 +50,23 @@ const generateSearchFilter =
   };
 
 export default function OrderStatus() {
-  const { data: sessionData } = useSession();
+  const { data: sessionData } = useSession({
+    required: true,
+    onUnauthenticated() {
+      console.log("uh oh - unauthetnicated");
+    }
+  });
   const [orders, setOrders] = useState<OrderWithCommentsAndUser[]>([]);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<
     ((e: OrderWithCommentsAndUser) => boolean)[]
   >([generateSearchFilter(search)]);
   const [sortOrder, setSortOrder] = useState('');
+  const orderQuery = api.order.getOrders.useQuery({role: (sessionData?.user.role ?? 0)});
 
-  const orderQuery = api.order.getOrders.useQuery();
   useEffect(() => {
     setOrders(orderQuery.data ? orderQuery.data : []);
-  });
+  }, [orderQuery]);
 
   const sortFunction = function(a: OrderWithCommentsAndUser, b: OrderWithCommentsAndUser) {
     if(sortOrder == "categories") {

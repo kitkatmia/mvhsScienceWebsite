@@ -13,23 +13,22 @@ import { env } from "../../../env.mjs";
 import { db } from "~/server/db";
 
 export const authOptions: NextAuthOptions = {
-  // Include user.id on session
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
 
-        // get user's role from the database and add it to the session
-        // used to determine if the user is an admin or not
         const userRole = await db.user.findUnique({
           where: { id: user.id },
-          select: { role: true },
+          select: {
+            role: true,
+          },
         });
-
         session.user.role = userRole?.role ?? 0;
       }
+
       return session;
-    },
+    }
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(db),

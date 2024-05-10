@@ -2,20 +2,27 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { Status } from "@prisma/client";
 
-export const orderRouter = createTRPCRouter( {
-    getOrders: publicProcedure
-    .query(({ ctx }) => {
-        return ctx.db.order.findMany({
+export const orderRouter = createTRPCRouter({
+  // DEBUG getOrders: there is an issue w/ synchronization. role isn't included in user within ctx, which is why their needed to be an input (a messier, worse solution)
+  getOrders: protectedProcedure
+    .input(z.object({
+      role: z.number()
+    }))
+    .query(async ({ ctx, input }) => {
+        return await ctx.db.order.findMany({
+          where: {
+            ...(input.role === 0 ? { userId: ctx.session?.user.id } : {}),
+          },
+          include: {
+            comments: {
               include: {
-                comments: {
-                  include: {
-                    user: true,
-                  },
-                },
                 user: true,
               },
-            });
-    }),
+            },
+            user: true,
+          },
+        });
+      }),
     createOrder: protectedProcedure
     .input(z.object({
         userId: z.string(),
