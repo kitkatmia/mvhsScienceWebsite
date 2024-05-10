@@ -102,12 +102,9 @@ export default function OrderTable(props: {
                           <p style={{ margin: 0 }}><strong>{questionType}</strong> {Object.values(detailsJSON[questionType])}</p>
                         </div>
                       );
-                      // subQuestions = {[questionType]: detailsJSON[questionType]} as SubQuestions; 
                     } else {
                       subQuestions = detailsJSON[questionType];
                     }
-                    // return <></>
-                    // const subQuestionArr: SubQuestions[] = detailsJSON[questionType];
                     const subQuestionElements = Object.keys(subQuestions).map((questionKey) => {
                       const answer = subQuestions[questionKey];
                       return (
