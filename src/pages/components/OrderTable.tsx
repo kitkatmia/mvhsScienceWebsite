@@ -4,7 +4,10 @@ import type { Order, Comment, User, Status } from "@prisma/client";
 import React, { useState } from "react";
 import Image from "next/image";
 import { Button, ClickAwayListener, TextareaAutosize } from "@mui/material";
+import SwitchAccessShortcutIcon from '@mui/icons-material/SwitchAccessShortcut';
+import IconButton from '@mui/material/IconButton';
 import { api } from "~/utils/api";
+import { useSession } from 'next-auth/react';
 
 interface DetailsJSON {
   [key: string]: SubQuestions;
@@ -33,12 +36,27 @@ export default function OrderTable(props: {
     b: OrderWithCommentsAndUser,
   ) => number;
 }) {
+  const { data: session } = useSession();
+  const progressMutation = api.order.changeOrderStatus.useMutation();
+
   if (props.orders == undefined) {
     props.orders = [];
   }
   if (props.filters == undefined) {
     props.filters = [(e) => true];
   }
+
+  const handleUpdateStatus = (orderId: string) => {
+      progressMutation.mutate({orderId: orderId}, {
+        onSuccess: (data) => {
+          console.log('Updated order successfully!', data);
+        },
+        onError: (error) => {
+          console.error('Failed to update order', error);
+        }
+      });
+  }
+
   return (
     <table className="m-auto w-3/4 table-auto border-collapse">
       <thead>
@@ -132,7 +150,12 @@ export default function OrderTable(props: {
                   // return JSON.stringify(e.details) */}
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
-                {statusMap[e.status]}
+                  {/* DEBUG: to see update, you have to update everything (reload); should be automatic*/}
+                  {
+                    session?.user.role === 1 ? (<>{statusMap[e.status]}<IconButton aria-label="update" onClick={() => handleUpdateStatus(e.id)}>
+                    <SwitchAccessShortcutIcon />
+                  </IconButton></>) : statusMap[e.status]
+                  }
               </td>
               <td className="border border-solid border-blue-500 p-2 text-lg">
                 <CommentBox comments={e.comments} orderId={e.id} />

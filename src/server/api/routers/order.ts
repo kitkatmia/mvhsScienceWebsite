@@ -2,6 +2,12 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { Status } from "@prisma/client";
 
+const statusMap: Record<Status, Status> = {
+  [Status.Complete]: Status.Not_Started,
+  [Status.Not_Started]: Status.In_Progress,
+  [Status.In_Progress]: Status.Complete,
+};
+
 export const orderRouter = createTRPCRouter({
   // DEBUG getOrders: there is an issue w/ synchronization. role isn't included in user within ctx, which is why their needed to be an input (a messier, worse solution)
   getOrders: protectedProcedure
@@ -57,18 +63,33 @@ export const orderRouter = createTRPCRouter({
               }
         });
         return comment;
-        // const user = await ctx.db.userAccount.findUnique({
-        //   where: { userId: ctx.session.user.id },
-        //   // include: {
-        //   //   subjects: true,
-        //   //   rooms: true,
-        //   // },
-        // });
-
-        // if (!user) {
-        //   throw new Error("User not found");
-        // }
-
-        // return user;
       }),
+    changeOrderStatus: protectedProcedure
+      .input(z.object({ orderId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const order = await ctx.db.order.findUnique({
+          where: { id: input.orderId },
+          select: { status: true }
+        });
+
+        if (!order) {
+          throw new Error("Order not found");
+        }
+
+        const currentStatus = order.status as Status;
+        const nextStatus = statusMap[currentStatus];
+
+        if (nextStatus === undefined) {
+          throw new Error("Next status is undefined...");
+        } else {
+          const updatedOrder = await ctx.db.order.update({
+            where: { id: input.orderId },
+            data: {
+              status: nextStatus 
+            }
+          });
+
+          return updatedOrder;
+        }
+      })
 })
