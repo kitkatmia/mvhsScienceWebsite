@@ -91,9 +91,10 @@ export default function OrderStatus() {
           setSearch(e.target.value)
           setFilters([generateSearchFilter(search)]);
         }}/> */}
-         <FormControl className="flex flex-row">
+      <div className="w-3/4 m-auto">
+        <FormControl className="flex flex-row">
         <TextField
-          className="m-4"
+          className="my-4 w-1/2"
           label="Search"
           value={search}
           onChange={(e) => {
@@ -101,10 +102,10 @@ export default function OrderStatus() {
             setFilters([generateSearchFilter(search)]);
           }}
         />
-        <Button className="my-4" onClick={() => setFilters([generateSearchFilter(search)])}>
+        <Button className="my-4 w-1/6 ml-4" onClick={() => setFilters([generateSearchFilter(search)])}>
           Search
         </Button>
-        <Button className="my-4"
+        <Button className="my-4 w-1/6 ml-4"
           onClick={() => {
             setSearch("");
             setFilters([generateSearchFilter("")]);
@@ -112,14 +113,15 @@ export default function OrderStatus() {
         >
           Clear Search
         </Button>
-        <Select className="w-40 ml-20 m-4" value={sortOrder} label="Sort by" onChange={e => {
+        <Select className="w-1/3 ml-10 my-4" value={sortOrder} label="Sort by" onChange={e => {
           setSortOrder(e.target.value as string);
         }}>
           <MenuItem value="categories">Category</MenuItem>
           <MenuItem value="date">Date</MenuItem>
           <MenuItem value="user">Username</MenuItem>
         </Select>
-      </FormControl>
+        </FormControl>
+      </div>
       {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} sortFunction={sortFunction} />}
       <Footer />
     </>
