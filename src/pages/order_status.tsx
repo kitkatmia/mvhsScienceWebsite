@@ -122,7 +122,7 @@ export default function OrderStatus() {
         </Select>
         </FormControl>
       </div>
-      {(sessionData?.user.role == 1) ? "user view": <OrderTable orders={orders} filters={filters} sortFunction={sortFunction} />}
+      <OrderTable orders={orders} filters={filters} sortFunction={sortFunction} />
       <Footer />
     </>
   );
