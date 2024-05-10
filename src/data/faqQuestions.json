@@ -3,6 +3,10 @@
         "question": "Why can't I access the general info link?",
         "answer": "You need to be signed into your MVLA account!"
     },
+    "Q11": {
+        "question": "Why are some of the forms on the field messed up (e.g. they have a question but no options)?",
+        "answer": "If you're encountering this issue with location, classes, or room, you most likely need to configure your settings. Click the top right settings icon to add your details."
+    },
     "Q2": {
         "question": "Where do I need to look for more information about setting up labs?",
         "answer": "Check out the general info website to get answers about that and a lot more!"

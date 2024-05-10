@@ -54,12 +54,308 @@
     },
     "Supplies Order Request": {
         "Q1": {
-            "question": "Supplies?",
+            "question": "Location:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q3": {
+            "question": "Date Supplies Needed:",
+            "answerType": "date"
+        },
+        "Q5": {
+            "question": "For what class are the supplies needed? (For budget allocation):",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "Brief description of supplies and reason needed (Ex: I need additional cables to connect equipment and cable ties to hold cables out of the way of students):",
+            "answerType": "text-field"
+        },
+        "Q7": {
+            "question": "Exact supplies needed? Drop an organized list here (number, exact name, size, type, concentration, model#, etc.). Include links to exactly what you want to order and we can pass the link on directly for the purchase order. (For Amazon orders, the shorter link is better.):",
+            "answerType": "text-field"
+        }
+    },
+    "Stock Solution Request": {
+        "Q1": {
+            "question": "Date needed:",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "First period Solution(s) needed:",
+            "answerType": "multi-period-autofill"
+        },
+        "Q3": {
+            "question": "Location:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q5": {
+            "question": "Specific Solution and amount you need. Make sure to include concentration, total amount, and number of containers of what amount(s):",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "Any special prep instructions (lab grade reagents, time frame for prep, recipe, etc)?",
+            "answerType": "text-field"
+        }
+    },
+    "Repair/Replace or Maintenance Request": {
+        "Q1": {
+            "question": "Date Needed:",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "Location:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q3": {
+            "question": "Repair or replace?",
             "answerType": "multi-select",
             "options": [
-                "Crayons",
-                "Pencils"
+                "Basic Maintenance",
+                "Repair",
+                "Replace part",
+                "Not sure yet"
             ]
+        },
+        "Q4": {
+            "question": "What equipment needs repair/replace? (Brief description of what it is and what you use it for)",
+            "answerType": "text-field"
+        },
+        "Q5": {
+            "question": "What's wrong with it? (Try to describe the problem in as much detail as you can - what part is broken, what's not working, etc)",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "For replacements please put a link for ordering (N/A for repairs).",
+            "answerType": "text-field"
+        }
+    },
+    "Lab Breakdown Request": {
+        "Q1": {
+            "question": "Which location?",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q2": {
+            "question": "Room number:",
+            "answerType": "auto-multi-select",
+            "type": "room"
+        },
+        "Q3": {
+            "question": "What's the earliest I can start to put things away?",
+            "answerType": "text-field"
+        },
+        "Q4": {
+            "question": "What's the best time to do the breakdown?",
+            "answerType": "text-field"
+        },
+        "Q5": {
+            "question": "When do you need the lab put away by?",
+            "answerType": "date"
+        },
+        "Q6": {
+            "question": "What do you need done?",
+            "answerType": "multi-select",
+            "options": [
+                "Put away equipment",
+                "Wash glassware",
+                "Return solutions to stock",
+                "Dispose of chemical waste",
+                "Dispose of biohazard waste"
+            ]
+        },
+        "Q7": {
+            "question": "Anything else you need done for this breakdown? (waste disposal, equipment fixes, etc)",
+            "answerType": "text-field"
+        },
+        "Q8": {
+            "question": "What lab activity is it? (short description)",
+            "answerType": "text-field"
+        },
+        "Q9": {
+            "question": "How many stations and what materials & reagents do you have?",
+            "answerType": "text-field"
+        },
+        "Q10": {
+            "question": "How long do you estimate the breakdown will take?",
+            "answerType": "text-field"
+        }
+    },
+    "Waste Pickup Request": {
+        "Q1": {
+            "question": "Request Date:",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "School Site:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q3": {
+            "question": "Room Number OR Waste Location:",
+            "answerType": "auto-multi-select",
+            "type": "room"
+        },
+        "Q4": {
+            "question": "Type of waste for disposal:",
+            "answerType": "multi-select",
+            "options": [
+                "Chemical",
+                "Biohazard",
+                "Both",
+                "I'm not sure",
+                "Special Waste (radio-isotopes, etc)"
+            ]
+        },
+        "Q5": {
+            "question": "Description of waste for disposal (what it is, amount(s), containers, and any other helpful info):",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "I have documented exactly what's in the waste. If not, I have attached here a copy of the lab activities that generated the waste.",
+            "answerType": "multi-select",
+            "options": [
+                "Yes - everything is documented",
+                "No - I'm attaching a link to the activities below."
+            ]
+        },
+        "Q7": {
+            "question": "I need this picked up by:",
+            "answerType": "date"
+        },
+        "Q8": {
+            "question": "Any other helpful info or lab activities?",
+            "answerType": "text-field"
+        }
+    },
+    "Demo Set Up": {
+        "Q1": {
+            "question": "Date Needed in your classroom:",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "First class period you'll need the setup:",
+            "answerType": "multi-period-autofill"
+        },
+        "Q4": {
+            "question": "Location:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q5": {
+            "question": "How long do you estimate the setup will take?",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "Class:",
+            "answerType": "auto-multi-select",
+            "type": "class"
+        },
+        "Q7": {
+            "question": "Room Number:",
+            "answerType": "auto-multi-select",
+            "type": "room"
+        },
+        "Q8": {
+            "question": "How many sections will reagents & consumables need to cover?",
+            "answerType": "text-field"
+        },
+        "Q9": {
+            "question": "Best time to contact you for questions?",
+            "answerType": "text-field"
+        },
+        "Q10": {
+            "question": "Please include a link to the procedure or recipe. For file sharing, please use email: julie.mcvay@mvla.net",
+            "answerType": "text-field"
+        },
+        "Q11": {
+            "question": "Anything that would be helpful to know about the equipment, reagents, or setup?",
+            "answerType": "text-field"
+        }
+    },
+    "Glassware Cleaning": {
+        "Q1": {
+            "question": "School site:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q2": {
+            "question": "Room #:",
+            "answerType": "auto-multi-select",
+            "type": "room"
+        },
+        "Q3": {
+            "question": "Request date:",
+            "answerType": "date"
+        },
+        "Q4": {
+            "question": "Need by date:",
+            "answerType": "date"
+        },
+        "Q5": {
+            "question": "Glassware description (how many pieces and what kinds of glassware):",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "Where is it? (I'll come get it if you leave it in a specific place in your classroom):",
+            "answerType": "text-field"
+        },
+        "Q7": {
+            "question": "What kind of Glassware Cleaning?",
+            "answerType": "multi-select",
+            "options": [
+                "Acid Wash",
+                "Autoclaving",
+                "Dishwasher",
+                "Other (explain below)"
+            ]
+        },
+        "Q8": {
+            "question": "What's on the glassware? (Put down any / as much info as you know - solutions or solids used, lab done, etc. If you're not sure, just write 'idk')",
+            "answerType": "text-field"
+        }
+    },
+    "General Help Request": {
+        "Q1": {
+            "question": "Date Requested:",
+            "answerType": "date"
+        },
+        "Q2": {
+            "question": "Need-by Date:",
+            "answerType": "date"
+        },
+        "Q3": {
+            "question": "Location:",
+            "answerType": "auto-multi-select",
+            "type": "school"
+        },
+        "Q4": {
+            "question": "Room Number or Location on Campus:",
+            "answerType": "auto-multi-select",
+            "type": "room"
+        },
+        "Q5": {
+            "question": "Short description of help needed ('inventory lab kits', 'label supplies', etc):",
+            "answerType": "text-field"
+        },
+        "Q6": {
+            "question": "Estimated total time for the project:",
+            "answerType": "text-field"
+        },
+        "Q7": {
+            "question": "Ok for students to help you with this?",
+            "answerType": "multi-select",
+            "options": [
+                "Yes",
+                "No",
+                "Depends on lab training",
+                "Other (please specify below)"
+            ]
+        },
+        "Q8": {
+            "question": "Detailed description of what you'd like done (including location in classroom, what supplies are needed, when it can be done, any skills needed for job, etc):",
+            "answerType": "text-field"
         }
     }
 }

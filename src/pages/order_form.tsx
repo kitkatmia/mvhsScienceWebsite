@@ -42,6 +42,7 @@ type Question = Record<string, StateType>;
 const OrderForm = () => {
   const mutation = api.order.createOrder.useMutation();
   const userQuery = api.user.getUserInfo.useQuery();
+  // const userLocation = userQuery.data?.school;
 
   const { data: session } = useSession();
   const { sharedState } = useOrderContext();
@@ -130,6 +131,8 @@ const OrderForm = () => {
         return JSON.parse(userQuery.data.rooms) as string[];
       } else if (type === "class" && typeof userQuery.data?.subjects === "string") {
         return JSON.parse(userQuery.data.subjects) as string[];
+      } else if (type === "school" && typeof userQuery.data?.school === "string") {
+        return [userQuery.data.school] as string[];
       }
     } catch (error) {
       console.error("Failed to parse JSON", error);
@@ -147,6 +150,8 @@ const OrderForm = () => {
       if (Object.keys(textFieldResponses).length > 1) {
         delete textFieldResponses[""]
       }
+
+      // const personLocation = session?.use
       const period_with_colon = period + ":";
       const orderDetails = {
         userId: session?.user?.id ?? "",
@@ -157,7 +162,7 @@ const OrderForm = () => {
           ...(Object.keys(textFieldResponses).length > 0 && {multiSelectResponses: multiSelectResponses}),
           ...(Object.keys(textFieldResponses).length > 0 && {textFieldResponses: textFieldResponses}),
           ...(period_with_colon !== ":" && {period_with_colon: period_with_colon}),
-          ...(selectedDate && { date: format(selectedDate, 'yyyy-MM-dd') })
+          ...(selectedDate && { date: format(selectedDate, 'yyyy-MM-dd') }),
         })
       };
       mutation.mutate(orderDetails, {
@@ -304,7 +309,6 @@ const OrderForm = () => {
                       <FormLabel id="demo-text-field" className="pb-2">{item.question}</FormLabel>
                       <TextField
                         id="outlined-basic"
-                        label="Ex: 2 hours, maybe 3"
                         variant="outlined"
                         value={(item.question) in textFieldResponses ? textFieldResponses[item.question] : ''}
                         onChange={(event) => handleTextFieldResponsesChange(item.question, event)}
