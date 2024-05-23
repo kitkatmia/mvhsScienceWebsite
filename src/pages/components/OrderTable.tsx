@@ -9,13 +9,9 @@ import IconButton from '@mui/material/IconButton';
 import { api } from "~/utils/api";
 import { useSession } from 'next-auth/react';
 
-interface DetailsJSON {
-  [key: string]: SubQuestions;
-}
+type DetailsJSON = Record<string, SubQuestions>;
 
-interface SubQuestions {
-  [key: string]: string;
-}
+type SubQuestions = Record<string, string>;
 
 const statusMap: Record<Status, string> = {
   Complete: "Complete",
@@ -108,8 +104,9 @@ export default function OrderTable(props: {
                 {
                   // console.log(Object.keys(JSON.parse(e.details)))
                   Object.keys(JSON.parse(e.details)).map((questionType) => {
-                    const detailsJSON: DetailsJSON = JSON.parse(e.details);
-                    let subQuestions: SubQuestions | undefined = {};
+                    // need as DetailsJSON to satisfy typescript-eslint
+                    const detailsJSON: DetailsJSON = JSON.parse(e.details) as DetailsJSON;
+                    let subQuestions: SubQuestions = detailsJSON[questionType] ?? {};
 
                     if (detailsJSON[questionType] === undefined || detailsJSON[questionType] == null) {
                       return;
@@ -118,13 +115,15 @@ export default function OrderTable(props: {
                     if (questionType === "period" || questionType === "date") {
                       return (
                         <div key={questionType} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                          <p style={{ margin: 0 }}><strong>{questionType}</strong> {Object.values(detailsJSON[questionType])}</p>
+                          <p style={{ margin: 0 }}><strong>{questionType}{": "}</strong>
+                            {Object.values(subQuestions)}
+                          </p>
                         </div>
                       );
                     } else {
-                      subQuestions = detailsJSON[questionType];
+                      subQuestions = detailsJSON[questionType] ?? {};
                     }
-                    const subQuestionElements = Object.keys(subQuestions).map((questionKey) => {
+                    const subQuestionElements = (subQuestions ? Object.keys(subQuestions) : []).map((questionKey) => {
                       const answer = subQuestions[questionKey];
                       return (
                         <div key={questionKey} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>

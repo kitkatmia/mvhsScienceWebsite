@@ -114,7 +114,7 @@ export default function OrderStatus() {
           Clear Search
         </Button>
         <Select className="w-1/3 ml-10 my-4" value={sortOrder} label="Sort by" onChange={e => {
-          setSortOrder(e.target.value as string);
+          setSortOrder(e.target.value);
         }}>
           <MenuItem value="categories">Category</MenuItem>
           <MenuItem value="date">Date</MenuItem>

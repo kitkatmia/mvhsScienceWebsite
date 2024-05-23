@@ -76,7 +76,7 @@ export const orderRouter = createTRPCRouter({
           throw new Error("Order not found");
         }
 
-        const currentStatus = order.status as Status;
+        const currentStatus = order.status;
         const nextStatus = statusMap[currentStatus];
 
         if (nextStatus === undefined) {
