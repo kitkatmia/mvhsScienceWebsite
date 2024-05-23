@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import orderFormQuestions from '../../data/orderFormQuestions.json';
-import { useOrderContext } from '../contexts/OrderContext';
+import { useOrderContext } from '../../contexts/OrderContext';
 import Link from 'next/link';
 
 const OrderCard = (props: {

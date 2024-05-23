@@ -13,7 +13,7 @@ import {experimental_extendTheme as materialExtendTheme, Experimental_CssVarsPro
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // import { StyledEngineProvider } from '@mui/material/styles';
-import { OrderProvider } from './contexts/OrderContext';
+import { OrderProvider } from '../contexts/OrderContext';
 import Head from "next/head";
 
 
